@@ -1,9 +1,102 @@
 :root {
-  --font-display:
-    Spline Sans, Inter, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
-    Segoe UI Symbol, Noto Color Emoji;
-  --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
-  --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
-  --font-serif: Georgia, 'Times New Roman', serif;
+  --font-display: Spline Sans, Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, sans-serif;
+
+  /* Obsidian / Slate Dark Theme (Default) */
+  --canvas-bg: #0b0f17;
+  --canvas-bg-radial: radial-gradient(circle at 50% 0%, #171d2b 0%, #0b0f17 100%);
+  --glass-surface: rgba(18, 24, 38, 0.72);
+  --glass-surface-hover: rgba(26, 34, 52, 0.85);
+  --glass-card-bg: linear-gradient(135deg, rgba(24, 31, 48, 0.75) 0%, rgba(13, 17, 27, 0.85) 100%);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-border-focus: rgba(99, 102, 241, 0.5);
+  --glass-specular: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.02) 100%);
+  --glass-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  --glass-glow-cyan: rgba(6, 182, 212, 0.15);
+  --glass-glow-violet: rgba(139, 92, 246, 0.15);
+  --glass-glow-emerald: rgba(16, 185, 129, 0.15);
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+[data-theme="light"] {
+  /* Frosty Crystal Porcelain Canvas */
+  --canvas-bg: #f1f5f9;
+  --canvas-bg-radial: radial-gradient(circle at 50% 0%, #ffffff 0%, #e8eef5 100%);
+  --glass-surface: rgba(255, 255, 255, 0.75);
+  --glass-surface-hover: rgba(255, 255, 255, 0.9);
+  --glass-card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(241, 245, 249, 0.75) 100%);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --glass-border-focus: rgba(99, 102, 241, 0.6);
+  --glass-specular: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.3) 100%);
+  --glass-shadow: 0 16px 36px -10px rgba(71, 85, 105, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+  --glass-glow-cyan: rgba(6, 182, 212, 0.1);
+  --glass-glow-violet: rgba(139, 92, 246, 0.1);
+  --glass-glow-emerald: rgba(16, 185, 129, 0.1);
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+}
+
+html, body {
+  background-color: var(--canvas-bg);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tabular figures for high-legibility counters */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  -moz-font-feature-settings: "tnum";
+  -webkit-font-feature-settings: "tnum";
+  font-feature-settings: "tnum";
+}
+
+/* Liquid Glass Backdrop Filter Utility */
+.liquid-glass {
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.liquid-glass-card {
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  backdrop-filter: blur(24px) saturate(190%);
+  background: var(--glass-card-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+/* Specular reflection line */
+.liquid-glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--glass-specular);
+  pointer-events: none;
 }

@@ -1,0 +1,261 @@
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { triggerHaptic } from '@/utils/haptics';
+import { useCounters } from '@/context/CounterContext';
+
+interface EmptyStateProps {
+  onAddPress: () => void;
+  onLoadSamples: () => void;
+}
+
+export function EmptyState({ onAddPress, onLoadSamples }: EmptyStateProps) {
+  const { themeMode } = useCounters();
+  const isDark = themeMode === 'dark';
+
+  return (
+    <View style={styles.container}>
+      {/* Visual glowing icon display */}
+      <View style={styles.glowContainer}>
+        <View
+          style={[
+            styles.glowAura,
+            {
+              backgroundColor: isDark
+                ? 'rgba(99, 102, 241, 0.25)'
+                : 'rgba(99, 102, 241, 0.12)',
+            },
+          ]}
+        />
+        <LinearGradient
+          colors={['#6366F1', '#3B82F6']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.iconCircle}>
+          <Ionicons name="calculator-outline" size={44} color="#FFFFFF" />
+        </LinearGradient>
+      </View>
+
+      <Text
+        style={[
+          styles.title,
+          { color: isDark ? '#FFFFFF' : '#0F172A' },
+        ]}>
+        No Counters Yet
+      </Text>
+      <Text
+        style={[
+          styles.description,
+          { color: isDark ? '#94A3B8' : '#64748B' },
+        ]}>
+        Create your first counter to track habits, gym reps, water intake, or critical tallies
+        with instant or two-step confirmed updates.
+      </Text>
+
+      {/* Feature Pills */}
+      <View style={styles.pillRow}>
+        <View
+          style={[
+            styles.featurePill,
+            isDark ? styles.pillDark : styles.pillLight,
+          ]}>
+          <Ionicons name="shield-checkmark" size={13} color="#10B981" />
+          <Text
+            style={[
+              styles.featurePillText,
+              { color: isDark ? '#CBD5E1' : '#334155' },
+            ]}>
+            Two-Step Confirmed
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.featurePill,
+            isDark ? styles.pillDark : styles.pillLight,
+          ]}>
+          <Ionicons name="flash" size={13} color="#3B82F6" />
+          <Text
+            style={[
+              styles.featurePillText,
+              { color: isDark ? '#CBD5E1' : '#334155' },
+            ]}>
+            Instant Simple
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.featurePill,
+            isDark ? styles.pillDark : styles.pillLight,
+          ]}>
+          <Ionicons name="lock-closed" size={13} color="#F59E0B" />
+          <Text
+            style={[
+              styles.featurePillText,
+              { color: isDark ? '#CBD5E1' : '#334155' },
+            ]}>
+            Custom Constraints
+          </Text>
+        </View>
+      </View>
+
+      {/* Primary Action Button */}
+      <TouchableOpacity
+        style={styles.primaryBtnWrapper}
+        onPress={() => {
+          triggerHaptic('medium');
+          onAddPress();
+        }}
+        activeOpacity={0.85}
+        accessibilityLabel="Create Your First Counter"
+        accessibilityRole="button">
+        <LinearGradient
+          colors={['#6366F1', '#4F46E5']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.primaryBtnGradient}>
+          <Ionicons name="add" size={22} color="#FFFFFF" />
+          <Text style={styles.primaryBtnText}>Create Your First Counter</Text>
+        </LinearGradient>
+      </TouchableOpacity>
+
+      {/* Quick Template Loading */}
+      <TouchableOpacity
+        style={[
+          styles.sampleBtn,
+          {
+            backgroundColor: isDark
+              ? 'rgba(99, 102, 241, 0.12)'
+              : 'rgba(99, 102, 241, 0.08)',
+            borderColor: isDark
+              ? 'rgba(99, 102, 241, 0.3)'
+              : 'rgba(99, 102, 241, 0.25)',
+          },
+        ]}
+        onPress={() => {
+          triggerHaptic('light');
+          onLoadSamples();
+        }}
+        activeOpacity={0.7}
+        accessibilityLabel="Load 3 Ready-to-use Counters"
+        accessibilityRole="button">
+        <Ionicons name="sparkles" size={16} color="#818CF8" />
+        <Text
+          style={[
+            styles.sampleBtnText,
+            { color: isDark ? '#C7D2FE' : '#4F46E5' },
+          ]}>
+          Or Load 3 Ready-to-use Counters
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 36,
+    paddingHorizontal: 20,
+  },
+  glowContainer: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  glowAura: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+  },
+  iconCircle: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#6366F1',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.45,
+    shadowRadius: 18,
+    elevation: 10,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '900',
+    letterSpacing: -0.4,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  description: {
+    fontSize: 13.5,
+    lineHeight: 20,
+    textAlign: 'center',
+    maxWidth: 360,
+    marginBottom: 20,
+  },
+  pillRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 8,
+    marginBottom: 28,
+  },
+  featurePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  pillDark: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+  },
+  pillLight: {
+    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    borderColor: 'rgba(0, 0, 0, 0.06)',
+  },
+  featurePillText: {
+    fontSize: 11.5,
+    fontWeight: '600',
+  },
+  primaryBtnWrapper: {
+    width: '100%',
+    maxWidth: 300,
+    borderRadius: 18,
+    overflow: 'hidden',
+    marginBottom: 12,
+  },
+  primaryBtnGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+  },
+  primaryBtnText: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  sampleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  sampleBtnText: {
+    fontSize: 12.5,
+    fontWeight: '700',
+  },
+});
