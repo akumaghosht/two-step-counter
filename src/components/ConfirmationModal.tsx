@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
+  Easing,
   Modal,
   StyleSheet,
   Text,
@@ -34,48 +35,82 @@ interface ConfirmationModalProps {
   onClose: () => void;
 }
 
+const AUTO_CANCEL_SECONDS = 5;
+
 export function ConfirmationModal({ config, onClose }: ConfirmationModalProps) {
   const { themeMode } = useCounters();
   const isDark = themeMode === 'dark';
 
   const [timerProgress] = useState(() => new Animated.Value(1));
+  const [secondsLeft, setSecondsLeft] = useState(AUTO_CANCEL_SECONDS);
   const autoDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const isVisible = Boolean(config && config.visible);
   const isStepAction = config?.variant === 'increment' || config?.variant === 'decrement';
 
-  const handleCancel = React.useCallback(() => {
+  const configRef = useRef(config);
+  configRef.current = config;
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  const clearTimers = React.useCallback(() => {
     if (autoDismissTimerRef.current) {
       clearTimeout(autoDismissTimerRef.current);
       autoDismissTimerRef.current = null;
     }
-    triggerHaptic('light');
-    config?.onCancel?.();
-    onClose();
-  }, [config, onClose]);
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+      countdownIntervalRef.current = null;
+    }
+  }, []);
 
-  // Auto-dismiss after 4 seconds of inactivity for two-step actions
+  const handleCancel = React.useCallback(() => {
+    clearTimers();
+    triggerHaptic('light');
+    configRef.current?.onCancel?.();
+    onCloseRef.current();
+  }, [clearTimers]);
+
+  // Auto-dismiss after 5 seconds of inactivity for two-step actions with live countdown
   useEffect(() => {
     if (isVisible && isStepAction) {
+      setSecondsLeft(AUTO_CANCEL_SECONDS);
       timerProgress.setValue(1);
-      Animated.timing(timerProgress, {
+
+      const animation = Animated.timing(timerProgress, {
         toValue: 0,
-        duration: 4000,
+        duration: AUTO_CANCEL_SECONDS * 1000,
+        easing: Easing.linear,
         useNativeDriver: false,
-      }).start();
+      });
+      animation.start();
+
+      countdownIntervalRef.current = setInterval(() => {
+        setSecondsLeft((prev) => {
+          if (prev <= 1) {
+            if (countdownIntervalRef.current) {
+              clearInterval(countdownIntervalRef.current);
+              countdownIntervalRef.current = null;
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
 
       autoDismissTimerRef.current = setTimeout(() => {
         handleCancel();
-      }, 4000);
-    }
+      }, AUTO_CANCEL_SECONDS * 1000);
 
-    return () => {
-      if (autoDismissTimerRef.current) {
-        clearTimeout(autoDismissTimerRef.current);
-        autoDismissTimerRef.current = null;
-      }
-    };
-  }, [isVisible, isStepAction, handleCancel, timerProgress]);
+      return () => {
+        animation.stop();
+        clearTimers();
+      };
+    } else {
+      clearTimers();
+    }
+  }, [isVisible, isStepAction, handleCancel, timerProgress, clearTimers]);
 
   if (!config || !config.visible) return null;
 
@@ -137,10 +172,7 @@ export function ConfirmationModal({ config, onClose }: ConfirmationModalProps) {
   const accent = getAccentConfig();
 
   const handleConfirm = () => {
-    if (autoDismissTimerRef.current) {
-      clearTimeout(autoDismissTimerRef.current);
-      autoDismissTimerRef.current = null;
-    }
+    clearTimers();
     triggerHaptic(isDelete ? 'heavy' : 'medium');
     onConfirm?.();
     onClose();
@@ -296,25 +328,42 @@ export function ConfirmationModal({ config, onClose }: ConfirmationModalProps) {
               {/* Auto-Dismiss Timer Indicator */}
               {isStepAction && (
                 <View style={styles.timerBarWrapper}>
-                  <Animated.View
+                  <View
                     style={[
-                      styles.timerBarProgress,
+                      styles.timerTrack,
                       {
-                        backgroundColor: accent.color,
-                        width: timerProgress.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: ['0%', '100%'],
-                        }),
+                        backgroundColor: isDark
+                          ? 'rgba(255, 255, 255, 0.08)'
+                          : 'rgba(0, 0, 0, 0.06)',
                       },
-                    ]}
-                  />
-                  <Text
-                    style={[
-                      styles.timerSubText,
-                      { color: isDark ? '#64748B' : '#94A3B8' },
                     ]}>
-                    Auto-cancels in 4s of inactivity
-                  </Text>
+                    <Animated.View
+                      style={[
+                        styles.timerBarProgress,
+                        {
+                          backgroundColor: accent.color,
+                          width: timerProgress.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: ['0%', '100%'],
+                          }),
+                        },
+                      ]}
+                    />
+                  </View>
+                  <View style={styles.timerSubTextRow}>
+                    <Ionicons
+                      name="timer-outline"
+                      size={13}
+                      color={isDark ? '#64748B' : '#94A3B8'}
+                    />
+                    <Text
+                      style={[
+                        styles.timerSubText,
+                        { color: isDark ? '#64748B' : '#94A3B8' },
+                      ]}>
+                      Auto-cancels in {secondsLeft}s of inactivity
+                    </Text>
+                  </View>
                 </View>
               )}
 
@@ -498,16 +547,28 @@ const styles = StyleSheet.create({
   timerBarWrapper: {
     marginBottom: 18,
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
+    width: '100%',
+  },
+  timerTrack: {
+    width: '100%',
+    height: 3.5,
+    borderRadius: 2,
+    overflow: 'hidden',
   },
   timerBarProgress: {
-    height: 3,
+    height: '100%',
     borderRadius: 2,
-    alignSelf: 'flex-start',
+  },
+  timerSubTextRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
   },
   timerSubText: {
-    fontSize: 11,
-    fontWeight: '500',
+    fontSize: 11.5,
+    fontWeight: '600',
+    fontVariant: ['tabular-nums'],
   },
   actionRow: {
     flexDirection: 'row',

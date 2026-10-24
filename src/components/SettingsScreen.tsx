@@ -517,7 +517,7 @@ export function SettingsScreen() {
                 styles.aboutLabel,
                 { color: isDark ? '#E2E8F0' : '#1E293B' },
               ]}>
-              Two-Step Flow: Prevents unintended count mutations with 4s auto-dismiss
+              Two-Step Flow: Prevents unintended count mutations with 5s auto-dismiss
             </Text>
           </View>
           <View style={styles.aboutRow}>
