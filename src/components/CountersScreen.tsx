@@ -35,6 +35,61 @@ export function CountersScreen() {
     return counters.filter((c) => c.type === filter);
   }, [counters, filter]);
 
+  const handleIncrementPress = (counter: CounterItem) => {
+    const step = counter.stepSize ?? 1;
+    const targetValue = counter.value + step;
+
+    if (counter.type === 'two-step') {
+      triggerHaptic('medium');
+      setDialogConfig({
+        visible: true,
+        variant: 'increment',
+        title: 'Confirm Value Change',
+        counterTitle: counter.title,
+        message: `Confirm increasing "${counter.title}" by +${step}?`,
+        currentValue: counter.value,
+        targetValue,
+        confirmLabel: `Confirm (+${step})`,
+        cancelLabel: 'Cancel',
+        onConfirm: async () => {
+          await incrementCounter(counter);
+        },
+      });
+    } else {
+      triggerHaptic('light');
+      incrementCounter(counter);
+    }
+  };
+
+  const handleDecrementPress = (counter: CounterItem) => {
+    const step = counter.stepSize ?? 1;
+    let targetValue = counter.value - step;
+    if (!counter.allowNegative && targetValue < 0) {
+      targetValue = 0;
+    }
+
+    if (counter.type === 'two-step') {
+      triggerHaptic('medium');
+      setDialogConfig({
+        visible: true,
+        variant: 'decrement',
+        title: 'Confirm Value Change',
+        counterTitle: counter.title,
+        message: `Confirm decreasing "${counter.title}" by -${step}?`,
+        currentValue: counter.value,
+        targetValue,
+        confirmLabel: `Confirm (-${step})`,
+        cancelLabel: 'Cancel',
+        onConfirm: async () => {
+          await decrementCounter(counter);
+        },
+      });
+    } else {
+      triggerHaptic('light');
+      decrementCounter(counter);
+    }
+  };
+
   const handleResetPress = (counter: CounterItem) => {
     triggerHaptic('warning');
     setDialogConfig({
@@ -234,8 +289,8 @@ export function CountersScreen() {
               <CounterCard
                 key={counter.id}
                 counter={counter}
-                onIncrement={incrementCounter}
-                onDecrement={decrementCounter}
+                onIncrement={handleIncrementPress}
+                onDecrement={handleDecrementPress}
                 onReset={handleResetPress}
                 onDelete={handleDeletePress}
               />

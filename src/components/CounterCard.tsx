@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Animated,
   StyleSheet,
@@ -21,11 +21,6 @@ interface CounterCardProps {
   onDelete: (counter: CounterItem) => void;
 }
 
-interface PendingConfirmation {
-  type: 'increment' | 'decrement';
-  targetValue: number;
-}
-
 export function CounterCard({
   counter,
   onIncrement,
@@ -39,53 +34,9 @@ export function CounterCard({
   const isTwoStep = counter.type === 'two-step';
   const step = counter.stepSize ?? 1;
 
-  // Inline Two-Step Confirmation State
-  const [pendingConfirmation, setPendingConfirmation] = useState<PendingConfirmation | null>(null);
-  const confirmTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Micro-animation scale values
+  // Micro-animation scale values for tactile feedback
   const [incScaleAnim] = useState(() => new Animated.Value(1));
   const [decScaleAnim] = useState(() => new Animated.Value(1));
-  const [confirmFadeAnim] = useState(() => new Animated.Value(0));
-
-  const dismissConfirmation = useCallback(() => {
-    if (confirmTimeoutRef.current) {
-      clearTimeout(confirmTimeoutRef.current);
-      confirmTimeoutRef.current = null;
-    }
-    setPendingConfirmation(null);
-  }, []);
-
-  // Auto-dismiss confirmation after 4 seconds of inactivity
-  useEffect(() => {
-    if (pendingConfirmation) {
-      Animated.timing(confirmFadeAnim, {
-        toValue: 1,
-        duration: 180,
-        useNativeDriver: true,
-      }).start();
-
-      if (confirmTimeoutRef.current) {
-        clearTimeout(confirmTimeoutRef.current);
-      }
-
-      confirmTimeoutRef.current = setTimeout(() => {
-        dismissConfirmation();
-      }, 4000);
-    } else {
-      Animated.timing(confirmFadeAnim, {
-        toValue: 0,
-        duration: 140,
-        useNativeDriver: true,
-      }).start();
-    }
-
-    return () => {
-      if (confirmTimeoutRef.current) {
-        clearTimeout(confirmTimeoutRef.current);
-      }
-    };
-  }, [pendingConfirmation, confirmFadeAnim, dismissConfirmation]);
 
   const animatePress = (animVal: Animated.Value) => {
     Animated.sequence([
@@ -108,18 +59,7 @@ export function CounterCard({
 
   const handleIncrementPress = () => {
     animatePress(incScaleAnim);
-    const targetValue = counter.value + step;
-
-    if (isTwoStep) {
-      triggerHaptic('light');
-      setPendingConfirmation({
-        type: 'increment',
-        targetValue,
-      });
-    } else {
-      triggerHaptic('medium');
-      onIncrement(counter);
-    }
+    onIncrement(counter);
   };
 
   const handleDecrementPress = () => {
@@ -131,37 +71,7 @@ export function CounterCard({
     }
 
     animatePress(decScaleAnim);
-    let targetValue = counter.value - step;
-    if (!counter.allowNegative && targetValue < 0) {
-      targetValue = 0;
-    }
-
-    if (isTwoStep) {
-      triggerHaptic('light');
-      setPendingConfirmation({
-        type: 'decrement',
-        targetValue,
-      });
-    } else {
-      triggerHaptic('medium');
-      onDecrement(counter);
-    }
-  };
-
-  const handleConfirmCommit = () => {
-    if (!pendingConfirmation) return;
-    triggerHaptic('success');
-    if (pendingConfirmation.type === 'increment') {
-      onIncrement(counter);
-    } else {
-      onDecrement(counter);
-    }
-    dismissConfirmation();
-  };
-
-  const handleCancelCommit = () => {
-    triggerHaptic('light');
-    dismissConfirmation();
+    onDecrement(counter);
   };
 
   return (
@@ -359,162 +269,82 @@ export function CounterCard({
           ) : null}
         </View>
 
-        {/* Controls Container with Inline Two-Step Confirmation Popover */}
-        <View style={styles.controlsRowWrapper}>
-          {/* Main Controls Row */}
-          <View style={styles.actionControlsRow}>
-            {/* Decrement Button: Strictly conditionally rendered! */}
-            {!counter.disableDecrease && (
-              <Animated.View
-                style={[
-                  styles.btnSlot,
-                  { transform: [{ scale: decScaleAnim }] },
-                ]}>
-                <TouchableOpacity
-                  style={[
-                    styles.glassControlBtn,
-                    styles.decBtn,
-                    isDark ? styles.decBtnDark : styles.decBtnLight,
-                    isDecDisabled && styles.disabledDecBtn,
-                  ]}
-                  disabled={isDecDisabled}
-                  onPress={handleDecrementPress}
-                  activeOpacity={0.75}
-                  accessibilityLabel={`Decrease by ${step}`}
-                  accessibilityRole="button"
-                  accessibilityState={{ disabled: isDecDisabled }}>
-                  <Ionicons
-                    name="remove"
-                    size={22}
-                    color={
-                      isDecDisabled
-                        ? isDark
-                          ? '#475569'
-                          : '#CBD5E1'
-                        : isDark
-                        ? '#E2E8F0'
-                        : '#1E293B'
-                    }
-                  />
-                  <Text
-                    style={[
-                      styles.btnLabel,
-                      {
-                        color: isDecDisabled
-                          ? isDark
-                            ? '#475569'
-                            : '#94A3B8'
-                          : isDark
-                          ? '#E2E8F0'
-                          : '#1E293B',
-                      },
-                    ]}>
-                    -{step}
-                  </Text>
-                </TouchableOpacity>
-              </Animated.View>
-            )}
-
-            {/* Increment Button: Always present */}
+        {/* Main Controls Row */}
+        <View style={styles.actionControlsRow}>
+          {/* Decrement Button: Strictly conditionally rendered! */}
+          {!counter.disableDecrease && (
             <Animated.View
               style={[
                 styles.btnSlot,
-                { transform: [{ scale: incScaleAnim }] },
+                { transform: [{ scale: decScaleAnim }] },
               ]}>
               <TouchableOpacity
-                style={styles.incTouch}
-                onPress={handleIncrementPress}
-                activeOpacity={0.85}
-                accessibilityLabel={`Increase by ${step}`}
-                accessibilityRole="button">
-                <LinearGradient
-                  colors={theme.gradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.incGradient}>
-                  <Ionicons name="add" size={24} color="#FFFFFF" />
-                  <Text style={styles.incBtnLabel}>+{step}</Text>
-                </LinearGradient>
+                style={[
+                  styles.glassControlBtn,
+                  styles.decBtn,
+                  isDark ? styles.decBtnDark : styles.decBtnLight,
+                  isDecDisabled && styles.disabledDecBtn,
+                ]}
+                disabled={isDecDisabled}
+                onPress={handleDecrementPress}
+                activeOpacity={0.75}
+                accessibilityLabel={`Decrease by ${step}`}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: isDecDisabled }}>
+                <Ionicons
+                  name="remove"
+                  size={22}
+                  color={
+                    isDecDisabled
+                      ? isDark
+                        ? '#475569'
+                        : '#CBD5E1'
+                      : isDark
+                      ? '#E2E8F0'
+                      : '#1E293B'
+                  }
+                />
+                <Text
+                  style={[
+                    styles.btnLabel,
+                    {
+                      color: isDecDisabled
+                        ? isDark
+                          ? '#475569'
+                          : '#94A3B8'
+                        : isDark
+                        ? '#E2E8F0'
+                        : '#1E293B',
+                    },
+                  ]}>
+                  -{step}
+                </Text>
               </TouchableOpacity>
             </Animated.View>
-          </View>
-
-          {/* Inline Liquid Glass Two-Step Confirmation Pill Overlay */}
-          {pendingConfirmation && (
-            <Animated.View
-              style={[
-                styles.inlineConfirmOverlay,
-                isDark ? styles.confirmOverlayDark : styles.confirmOverlayLight,
-                { opacity: confirmFadeAnim },
-              ]}>
-              <View style={styles.confirmPromptCol}>
-                <Text
-                  style={[
-                    styles.confirmPromptTitle,
-                    { color: isDark ? '#FFFFFF' : '#0F172A' },
-                  ]}>
-                  Confirm change to{' '}
-                  <Text style={{ color: theme.primary, fontWeight: '900' }}>
-                    {pendingConfirmation.targetValue}
-                  </Text>
-                  ?
-                </Text>
-                <Text
-                  style={[
-                    styles.confirmSubText,
-                    { color: isDark ? '#94A3B8' : '#64748B' },
-                  ]}>
-                  {counter.value} → {pendingConfirmation.targetValue} (auto-cancels in 4s)
-                </Text>
-              </View>
-
-              <View style={styles.confirmActionsRow}>
-                <TouchableOpacity
-                  style={[
-                    styles.glassPillBtn,
-                    styles.cancelPillBtn,
-                    {
-                      backgroundColor: isDark
-                        ? 'rgba(255, 255, 255, 0.1)'
-                        : 'rgba(0, 0, 0, 0.06)',
-                    },
-                  ]}
-                  onPress={handleCancelCommit}
-                  activeOpacity={0.8}
-                  accessibilityLabel="Cancel value change"
-                  accessibilityRole="button">
-                  <Ionicons
-                    name="close"
-                    size={16}
-                    color={isDark ? '#E2E8F0' : '#475569'}
-                  />
-                  <Text
-                    style={[
-                      styles.pillBtnText,
-                      { color: isDark ? '#E2E8F0' : '#475569' },
-                    ]}>
-                    Cancel
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.glassPillBtn, styles.confirmCommitBtn]}
-                  onPress={handleConfirmCommit}
-                  activeOpacity={0.85}
-                  accessibilityLabel="Confirm value change"
-                  accessibilityRole="button">
-                  <LinearGradient
-                    colors={['#10B981', '#059669']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.confirmCommitGradient}>
-                    <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                    <Text style={styles.confirmCommitText}>Confirm</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              </View>
-            </Animated.View>
           )}
+
+          {/* Increment Button: Always present */}
+          <Animated.View
+            style={[
+              styles.btnSlot,
+              { transform: [{ scale: incScaleAnim }] },
+            ]}>
+            <TouchableOpacity
+              style={styles.incTouch}
+              onPress={handleIncrementPress}
+              activeOpacity={0.85}
+              accessibilityLabel={`Increase by ${step}`}
+              accessibilityRole="button">
+              <LinearGradient
+                colors={theme.gradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.incGradient}>
+                <Ionicons name="add" size={24} color="#FFFFFF" />
+                <Text style={styles.incBtnLabel}>+{step}</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
       </View>
     </View>
@@ -681,14 +511,11 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontWeight: '500',
   },
-  controlsRowWrapper: {
-    position: 'relative',
-    marginTop: 4,
-  },
   actionControlsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    marginTop: 4,
   },
   btnSlot: {
     flex: 1,
@@ -738,85 +565,6 @@ const styles = StyleSheet.create({
   incBtnLabel: {
     color: '#FFFFFF',
     fontSize: 17,
-    fontWeight: '800',
-  },
-  inlineConfirmOverlay: {
-    position: 'absolute',
-    top: -4,
-    left: -4,
-    right: -4,
-    bottom: -4,
-    borderRadius: 18,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    zIndex: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  confirmOverlayDark: {
-    backgroundColor: 'rgba(15, 23, 42, 0.96)',
-    borderColor: 'rgba(16, 185, 129, 0.45)',
-  },
-  confirmOverlayLight: {
-    backgroundColor: 'rgba(255, 255, 255, 0.96)',
-    borderColor: 'rgba(16, 185, 129, 0.5)',
-  },
-  confirmPromptCol: {
-    flex: 1,
-    paddingRight: 8,
-  },
-  confirmPromptTitle: {
-    fontSize: 13.5,
-    fontWeight: '700',
-  },
-  confirmSubText: {
-    fontSize: 10.5,
-    marginTop: 2,
-  },
-  confirmActionsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  glassPillBtn: {
-    borderRadius: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  cancelPillBtn: {
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-  },
-  pillBtnText: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  confirmCommitBtn: {
-    overflow: 'hidden',
-    paddingHorizontal: 0,
-    paddingVertical: 0,
-  },
-  confirmCommitGradient: {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 12,
-  },
-  confirmCommitText: {
-    color: '#FFFFFF',
-    fontSize: 12,
     fontWeight: '800',
   },
 });
