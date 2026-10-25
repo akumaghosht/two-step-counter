@@ -114,12 +114,8 @@ export function SettingsScreen() {
         <View
           style={[
             styles.glassPanel,
+            styles.themePanel,
             isDark ? styles.panelDark : styles.panelLight,
-            {
-              borderColor: isDark
-                ? 'rgba(255, 255, 255, 0.12)'
-                : 'rgba(255, 255, 255, 0.8)',
-            },
           ]}>
           <View style={styles.themeToggleRow}>
             <View style={styles.themeInfoCol}>
@@ -129,15 +125,6 @@ export function SettingsScreen() {
                   { color: isDark ? '#FFFFFF' : '#0F172A' },
                 ]}>
                 Interface Mode
-              </Text>
-              <Text
-                style={[
-                  styles.cardSubText,
-                  { color: isDark ? '#94A3B8' : '#64748B' },
-                ]}>
-                {isDark
-                  ? 'Deep obsidian / slate liquid glass'
-                  : 'Frosty crystal porcelain canvas'}
               </Text>
             </View>
 
@@ -350,11 +337,6 @@ export function SettingsScreen() {
           style={[
             styles.glassPanel,
             isDark ? styles.panelDark : styles.panelLight,
-            {
-              borderColor: isDark
-                ? 'rgba(255, 255, 255, 0.12)'
-                : 'rgba(255, 255, 255, 0.8)',
-            },
           ]}>
           {/* Load Sample Counters */}
           <TouchableOpacity
@@ -507,11 +489,6 @@ export function SettingsScreen() {
           style={[
             styles.glassPanel,
             isDark ? styles.panelDark : styles.panelLight,
-            {
-              borderColor: isDark
-                ? 'rgba(255, 255, 255, 0.12)'
-                : 'rgba(255, 255, 255, 0.8)',
-            },
           ]}>
           <View style={styles.aboutRow}>
             <Smartphone size={18} color="#6366F1" strokeWidth={2} />
@@ -581,17 +558,24 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     borderWidth: 1,
     padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 4,
+    overflow: 'hidden',
+    shadowColor: '#64748B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
   },
   panelDark: {
-    backgroundColor: 'rgba(18, 24, 38, 0.75)',
+    backgroundColor: '#121826',
+    borderColor: 'rgba(255, 255, 255, 0.12)',
   },
   panelLight: {
-    backgroundColor: 'rgba(255, 255, 255, 0.82)',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#E2E8F0',
+  },
+  themePanel: {
+    paddingVertical: 9,
+    paddingHorizontal: 16,
+    borderRadius: 18,
   },
   themeToggleRow: {
     flexDirection: 'row',
@@ -603,17 +587,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardMainText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
-  },
-  cardSubText: {
-    fontSize: 12,
-    marginTop: 3,
   },
   themeSwitchGroup: {
     flexDirection: 'row',
-    borderRadius: 14,
-    padding: 3,
+    borderRadius: 12,
+    padding: 2.5,
     borderWidth: 1,
   },
   themeSwitchDark: {
@@ -627,10 +607,10 @@ const styles = StyleSheet.create({
   themeOptionBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingVertical: 7,
-    paddingHorizontal: 12,
-    borderRadius: 11,
+    gap: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 9,
   },
   themeOptionActiveDark: {
     backgroundColor: 'rgba(99, 102, 241, 0.3)',
@@ -641,10 +621,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2,
   },
   themeOptionText: {
-    fontSize: 12.5,
+    fontSize: 12,
     fontWeight: '700',
   },
   bentoGrid: {
@@ -659,19 +638,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 16,
     gap: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 3,
+    overflow: 'hidden',
+    shadowColor: '#64748B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
   },
   tileDark: {
-    backgroundColor: 'rgba(18, 24, 38, 0.72)',
+    backgroundColor: '#121826',
     borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   tileLight: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderColor: 'rgba(255, 255, 255, 0.75)',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#E2E8F0',
   },
   bentoTop: {
     flexDirection: 'row',

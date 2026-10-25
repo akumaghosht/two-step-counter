@@ -354,12 +354,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   filterBarDark: {
-    backgroundColor: 'rgba(18, 24, 38, 0.72)',
+    backgroundColor: '#121826',
     borderColor: 'rgba(255, 255, 255, 0.12)',
   },
   filterBarLight: {
-    backgroundColor: 'rgba(255, 255, 255, 0.78)',
-    borderColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#E2E8F0',
     shadowColor: '#64748B',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,

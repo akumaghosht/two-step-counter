@@ -102,8 +102,8 @@ export function CounterCard({
           isDark ? styles.glassCardDark : styles.glassCardLight,
           {
             borderColor: isDark
-              ? 'rgba(255, 255, 255, 0.14)'
-              : 'rgba(255, 255, 255, 0.85)',
+              ? 'rgba(255, 255, 255, 0.12)'
+              : '#E2E8F0',
           },
         ]}>
         {/* Specular reflection line at the top */}
@@ -375,19 +375,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     position: 'relative',
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
-    elevation: 3,
+    shadowColor: '#64748B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
   },
   glassCardDark: {
-    backgroundColor: 'rgba(18, 24, 38, 0.82)',
+    backgroundColor: '#121826',
+    borderColor: 'rgba(255, 255, 255, 0.12)',
   },
   glassCardLight: {
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#E2E8F0',
     shadowColor: '#64748B',
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.08,
   },
   specularBar: {
     position: 'absolute',

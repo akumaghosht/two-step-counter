@@ -121,7 +121,6 @@ export function EmptyState({ onAddPress, onLoadSamples }: EmptyStateProps) {
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.primaryBtnGradient}>
-          <View style={styles.btnSpecularSheen} />
           <View style={styles.btnIconBadge}>
             <Plus size={16} color="#FFFFFF" strokeWidth={2.8} />
           </View>
@@ -255,19 +254,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.32)',
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  btnSpecularSheen: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '46%',
-    backgroundColor: 'rgba(255, 255, 255, 0.16)',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderColor: 'rgba(255, 255, 255, 0.28)',
+    borderTopColor: 'rgba(255, 255, 255, 0.55)',
   },
   btnIconBadge: {
     width: 26,

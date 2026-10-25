@@ -61,7 +61,6 @@ export function HeaderStats({
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.addBtnGradient}>
-            <View style={styles.btnSpecularSheen} />
             <View style={styles.iconCircle}>
               <Plus size={14} color="#FFFFFF" strokeWidth={2.8} />
             </View>
@@ -235,19 +234,8 @@ const styles = StyleSheet.create({
     paddingRight: 14,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.32)',
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  btnSpecularSheen: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '48%',
-    backgroundColor: 'rgba(255, 255, 255, 0.16)',
-    borderTopLeftRadius: 22,
-    borderTopRightRadius: 22,
+    borderColor: 'rgba(255, 255, 255, 0.28)',
+    borderTopColor: 'rgba(255, 255, 255, 0.55)',
   },
   iconCircle: {
     width: 24,

@@ -653,7 +653,6 @@ export function AddCounterModal({ visible, onClose, onAddCounter }: AddCounterMo
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.submitGradient}>
-                  <View style={styles.modalBtnSheen} />
                   <View style={styles.submitIconBadge}>
                     <Plus size={15} color="#FFFFFF" strokeWidth={2.8} />
                   </View>
@@ -979,19 +978,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.32)',
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  modalBtnSheen: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '46%',
-    backgroundColor: 'rgba(255, 255, 255, 0.16)',
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
+    borderColor: 'rgba(255, 255, 255, 0.28)',
+    borderTopColor: 'rgba(255, 255, 255, 0.55)',
   },
   submitIconBadge: {
     width: 24,
