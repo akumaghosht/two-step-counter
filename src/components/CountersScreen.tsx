@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { ShieldCheck, Zap } from 'lucide-react-native';
 import { CounterItem, FilterCategory } from '@/types/counter';
 import { useCounters } from '@/context/CounterContext';
 import { CounterCard } from '@/components/CounterCard';
@@ -189,7 +189,7 @@ export function CountersScreen() {
                     fontWeight: filter === 'all' ? '800' : '600',
                   },
                 ]}>
-                All ({counters.length})
+                All
               </Text>
             </TouchableOpacity>
 
@@ -204,8 +204,7 @@ export function CountersScreen() {
                 setFilter('two-step');
               }}
               accessibilityLabel="Show two-step counters">
-              <Ionicons
-                name="shield-checkmark"
+              <ShieldCheck
                 size={13}
                 color={
                   filter === 'two-step'
@@ -214,6 +213,7 @@ export function CountersScreen() {
                     ? '#64748B'
                     : '#94A3B8'
                 }
+                strokeWidth={2.4}
               />
               <Text
                 style={[
@@ -245,8 +245,7 @@ export function CountersScreen() {
                 setFilter('simple');
               }}
               accessibilityLabel="Show simple counters">
-              <Ionicons
-                name="flash"
+              <Zap
                 size={13}
                 color={
                   filter === 'simple'
@@ -255,6 +254,7 @@ export function CountersScreen() {
                     ? '#64748B'
                     : '#94A3B8'
                 }
+                strokeWidth={2.4}
               />
               <Text
                 style={[
@@ -337,12 +337,12 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 120, // Prevents counters from being obscured by floating tab bar
+    paddingTop: 12,
+    paddingBottom: 110, // Prevents counters from being obscured by floating tab bar
     maxWidth: 720,
     width: '100%',
     alignSelf: 'center',
-    gap: 14,
+    gap: 8,
   },
   filterBar: {
     flexDirection: 'row',

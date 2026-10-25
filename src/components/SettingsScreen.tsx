@@ -6,7 +6,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import {
+  Calculator,
+  ChevronRight,
+  Layers,
+  Moon,
+  Palette,
+  RotateCcw,
+  ShieldCheck,
+  Smartphone,
+  Sparkles,
+  Sun,
+  Trash2,
+  Zap,
+} from 'lucide-react-native';
 import { useCounters } from '@/context/CounterContext';
 import { triggerHaptic } from '@/utils/haptics';
 import { ConfirmationModal, DialogConfig } from '@/components/ConfirmationModal';
@@ -142,10 +155,10 @@ export function SettingsScreen() {
                 onPress={() => handleToggleTheme('light')}
                 activeOpacity={0.8}
                 accessibilityLabel="Switch to Light Theme">
-                <Ionicons
-                  name="sunny"
+                <Sun
                   size={16}
                   color={!isDark ? '#F59E0B' : '#94A3B8'}
+                  strokeWidth={2.2}
                 />
                 <Text
                   style={[
@@ -164,10 +177,10 @@ export function SettingsScreen() {
                 onPress={() => handleToggleTheme('dark')}
                 activeOpacity={0.8}
                 accessibilityLabel="Switch to Dark Theme">
-                <Ionicons
-                  name="moon"
+                <Moon
                   size={16}
                   color={isDark ? '#818CF8' : '#64748B'}
+                  strokeWidth={2.2}
                 />
                 <Text
                   style={[
@@ -200,7 +213,7 @@ export function SettingsScreen() {
               isDark ? styles.tileDark : styles.tileLight,
             ]}>
             <View style={styles.bentoTop}>
-              <Ionicons name="layers-outline" size={18} color="#6366F1" />
+              <Layers size={18} color="#6366F1" strokeWidth={2} />
               <Text
                 style={[
                   styles.bentoTag,
@@ -232,7 +245,7 @@ export function SettingsScreen() {
               isDark ? styles.tileDark : styles.tileLight,
             ]}>
             <View style={styles.bentoTop}>
-              <Ionicons name="calculator-outline" size={18} color="#10B981" />
+              <Calculator size={18} color="#10B981" strokeWidth={2} />
               <Text
                 style={[
                   styles.bentoTag,
@@ -264,7 +277,7 @@ export function SettingsScreen() {
               isDark ? styles.tileDark : styles.tileLight,
             ]}>
             <View style={styles.bentoTop}>
-              <Ionicons name="shield-checkmark-outline" size={18} color="#34D399" />
+              <ShieldCheck size={18} color="#34D399" strokeWidth={2} />
               <Text
                 style={[
                   styles.bentoTag,
@@ -296,7 +309,7 @@ export function SettingsScreen() {
               isDark ? styles.tileDark : styles.tileLight,
             ]}>
             <View style={styles.bentoTop}>
-              <Ionicons name="flash-outline" size={18} color="#60A5FA" />
+              <Zap size={18} color="#60A5FA" strokeWidth={2} />
               <Text
                 style={[
                   styles.bentoTag,
@@ -357,7 +370,7 @@ export function SettingsScreen() {
                     : 'rgba(99, 102, 241, 0.1)',
                 },
               ]}>
-              <Ionicons name="sparkles" size={18} color="#6366F1" />
+              <Sparkles size={18} color="#6366F1" strokeWidth={2} />
             </View>
             <View style={styles.dataActionInfo}>
               <Text
@@ -375,10 +388,10 @@ export function SettingsScreen() {
                 Adds sample counters showcasing two-step and lock constraints
               </Text>
             </View>
-            <Ionicons
-              name="chevron-forward"
+            <ChevronRight
               size={18}
               color={isDark ? '#64748B' : '#94A3B8'}
+              strokeWidth={2}
             />
           </TouchableOpacity>
 
@@ -407,7 +420,7 @@ export function SettingsScreen() {
                     : 'rgba(245, 158, 11, 0.1)',
                 },
               ]}>
-              <Ionicons name="refresh" size={18} color="#F59E0B" />
+              <RotateCcw size={18} color="#F59E0B" strokeWidth={2} />
             </View>
             <View style={styles.dataActionInfo}>
               <Text
@@ -425,10 +438,10 @@ export function SettingsScreen() {
                 Zeroes out current tally without removing any counters
               </Text>
             </View>
-            <Ionicons
-              name="chevron-forward"
+            <ChevronRight
               size={18}
               color={isDark ? '#64748B' : '#94A3B8'}
+              strokeWidth={2}
             />
           </TouchableOpacity>
 
@@ -457,7 +470,7 @@ export function SettingsScreen() {
                     : 'rgba(239, 68, 68, 0.1)',
                 },
               ]}>
-              <Ionicons name="trash-outline" size={18} color="#EF4444" />
+              <Trash2 size={18} color="#EF4444" strokeWidth={2} />
             </View>
             <View style={styles.dataActionInfo}>
               <Text style={[styles.dataActionTitle, { color: '#EF4444' }]}>
@@ -471,10 +484,10 @@ export function SettingsScreen() {
                 Permanently purge all counters and reset application state
               </Text>
             </View>
-            <Ionicons
-              name="chevron-forward"
+            <ChevronRight
               size={18}
               color={isDark ? '#64748B' : '#94A3B8'}
+              strokeWidth={2}
             />
           </TouchableOpacity>
         </View>
@@ -501,7 +514,7 @@ export function SettingsScreen() {
             },
           ]}>
           <View style={styles.aboutRow}>
-            <Ionicons name="phone-portrait-outline" size={18} color="#6366F1" />
+            <Smartphone size={18} color="#6366F1" strokeWidth={2} />
             <Text
               style={[
                 styles.aboutLabel,
@@ -511,7 +524,7 @@ export function SettingsScreen() {
             </Text>
           </View>
           <View style={styles.aboutRow}>
-            <Ionicons name="shield-checkmark-outline" size={18} color="#10B981" />
+            <ShieldCheck size={18} color="#10B981" strokeWidth={2} />
             <Text
               style={[
                 styles.aboutLabel,
@@ -521,7 +534,7 @@ export function SettingsScreen() {
             </Text>
           </View>
           <View style={styles.aboutRow}>
-            <Ionicons name="color-palette-outline" size={18} color="#F59E0B" />
+            <Palette size={18} color="#F59E0B" strokeWidth={2} />
             <Text
               style={[
                 styles.aboutLabel,

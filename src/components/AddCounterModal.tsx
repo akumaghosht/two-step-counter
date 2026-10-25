@@ -3,17 +3,29 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Switch,
   Text,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import {
+  AlertCircle,
+  ArrowUpCircle,
+  Ban,
+  Check,
+  CheckCircle2,
+  Plus,
+  PlusCircle,
+  ShieldCheck,
+  X,
+  Zap,
+} from 'lucide-react-native';
+import { CounterIcon } from '@/components/CounterIcon';
 import { CounterItem, CounterType } from '@/types/counter';
 import { AVAILABLE_ICONS, COUNTER_THEMES, getThemeById } from '@/constants/palettes';
 import { triggerHaptic } from '@/utils/haptics';
@@ -96,538 +108,562 @@ export function AddCounterModal({ visible, onClose, onAddCounter }: AddCounterMo
       animationType="fade"
       transparent
       onRequestClose={handleClose}>
-      <TouchableWithoutFeedback onPress={handleClose}>
-        <View style={styles.modalOverlay}>
-          <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-            <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-              style={styles.keyboardContainer}>
-              <View
-                style={[
-                  styles.modalCard,
-                  isDark ? styles.modalDark : styles.modalLight,
-                ]}>
-                {/* Header */}
-                <View style={styles.modalHeader}>
-                  <View style={styles.headerTitleGroup}>
-                    <View
-                      style={[
-                        styles.headerIconWrap,
-                        {
-                          backgroundColor: isDark
-                            ? 'rgba(99, 102, 241, 0.15)'
-                            : 'rgba(99, 102, 241, 0.1)',
-                        },
-                      ]}>
-                      <Ionicons name="add-circle" size={24} color="#6366F1" />
-                    </View>
-                    <View>
-                      <Text
-                        style={[
-                          styles.modalTitle,
-                          { color: isDark ? '#FFFFFF' : '#0F172A' },
-                        ]}>
-                        New Counter
-                      </Text>
-                      <Text
-                        style={[
-                          styles.modalSubtitle,
-                          { color: isDark ? '#94A3B8' : '#64748B' },
-                        ]}>
-                        Configure type, constraints, and styling
-                      </Text>
-                    </View>
-                  </View>
+      <View style={styles.modalOverlay}>
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={handleClose}
+          accessibilityLabel="Close creation modal backdrop"
+        />
 
-                  <TouchableOpacity
-                    style={[
-                      styles.closeIconBtn,
-                      {
-                        backgroundColor: isDark
-                          ? 'rgba(255, 255, 255, 0.08)'
-                          : 'rgba(0, 0, 0, 0.05)',
-                      },
-                    ]}
-                    onPress={handleClose}
-                    accessibilityLabel="Close creation modal"
-                    accessibilityRole="button">
-                    <Ionicons
-                      name="close"
-                      size={20}
-                      color={isDark ? '#94A3B8' : '#64748B'}
-                    />
-                  </TouchableOpacity>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.keyboardContainer}
+          pointerEvents="box-none">
+          <View
+            style={[
+              styles.modalCard,
+              isDark ? styles.modalDark : styles.modalLight,
+            ]}>
+            {/* Header */}
+            <View
+              style={[
+                styles.modalHeader,
+                {
+                  borderBottomColor: isDark
+                    ? 'rgba(255, 255, 255, 0.08)'
+                    : 'rgba(0, 0, 0, 0.08)',
+                },
+              ]}>
+              <View style={styles.headerTitleGroup}>
+                <View
+                  style={[
+                    styles.headerIconWrap,
+                    {
+                      backgroundColor: isDark
+                        ? 'rgba(99, 102, 241, 0.15)'
+                        : 'rgba(99, 102, 241, 0.1)',
+                    },
+                  ]}>
+                  <PlusCircle size={22} color="#6366F1" strokeWidth={2.2} />
                 </View>
+                <Text
+                  style={[
+                    styles.modalTitle,
+                    { color: isDark ? '#FFFFFF' : '#0F172A' },
+                  ]}>
+                  New Counter
+                </Text>
+              </View>
 
-                {/* Form Content */}
-                <ScrollView
-                  style={styles.formScroll}
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={styles.formContent}>
-                  {/* Name Input */}
-                  <View style={styles.inputGroup}>
-                    <Text
-                      style={[
-                        styles.groupLabel,
-                        { color: isDark ? '#E2E8F0' : '#1E293B' },
-                      ]}>
-                      Counter Name
-                    </Text>
-                    <View
-                      style={[
-                        styles.glassInputWrap,
-                        isDark ? styles.glassInputDark : styles.glassInputLight,
-                      ]}>
-                      <TextInput
-                        style={[
-                          styles.textInput,
-                          { color: isDark ? '#FFFFFF' : '#0F172A' },
-                        ]}
-                        placeholder={defaultName}
-                        placeholderTextColor={isDark ? '#64748B' : '#94A3B8'}
-                        value={title}
-                        onChangeText={(t) => {
-                          setTitle(t);
-                          if (errorMsg) setErrorMsg('');
-                        }}
-                        maxLength={40}
-                        returnKeyType="done"
-                      />
-                    </View>
-                    <Text
-                      style={[
-                        styles.inputHelp,
-                        { color: isDark ? '#64748B' : '#94A3B8' },
-                      ]}>
-                      Leave blank to automatically assign {defaultName}
-                    </Text>
-                  </View>
+              <TouchableOpacity
+                style={[
+                  styles.closeIconBtn,
+                  {
+                    backgroundColor: isDark
+                      ? 'rgba(255, 255, 255, 0.08)'
+                      : 'rgba(0, 0, 0, 0.05)',
+                  },
+                ]}
+                onPress={handleClose}
+                accessibilityLabel="Close creation modal"
+                accessibilityRole="button">
+                <X
+                  size={20}
+                  color={isDark ? '#94A3B8' : '#64748B'}
+                  strokeWidth={2}
+                />
+              </TouchableOpacity>
+            </View>
 
-                  {/* Segmented Glass Switch for Counter Type */}
-                  <View style={styles.inputGroup}>
-                    <Text
-                      style={[
-                        styles.groupLabel,
-                        { color: isDark ? '#E2E8F0' : '#1E293B' },
-                      ]}>
-                      Counter Type
-                    </Text>
-                    <View
-                      style={[
-                        styles.segmentedSwitch,
-                        isDark ? styles.segmentedDark : styles.segmentedLight,
-                      ]}>
-                      {/* Two-Step Option */}
-                      <TouchableOpacity
-                        style={[
-                          styles.segmentBtn,
-                          type === 'two-step' &&
-                            (isDark
-                              ? styles.segmentActiveDark
-                              : styles.segmentActiveLight),
-                        ]}
-                        onPress={() => {
-                          triggerHaptic('light');
-                          setType('two-step');
-                        }}
-                        activeOpacity={0.8}>
-                        <Ionicons
-                          name="shield-checkmark"
-                          size={15}
-                          color={
-                            type === 'two-step'
-                              ? '#10B981'
-                              : isDark
-                              ? '#64748B'
-                              : '#94A3B8'
-                          }
-                        />
-                        <View style={styles.segmentTextCol}>
-                          <Text
-                            style={[
-                              styles.segmentTitle,
-                              {
-                                color:
-                                  type === 'two-step'
-                                    ? isDark
-                                      ? '#FFFFFF'
-                                      : '#0F172A'
-                                    : isDark
-                                    ? '#94A3B8'
-                                    : '#64748B',
-                              },
-                            ]}>
-                            Two-Step
-                          </Text>
-                          <Text
-                            style={[
-                              styles.segmentDesc,
-                              { color: isDark ? '#64748B' : '#94A3B8' },
-                            ]}>
-                            Requires confirm
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
+            {/* Form Content */}
+            <ScrollView
+              style={styles.formScroll}
+              showsVerticalScrollIndicator={true}
+              keyboardShouldPersistTaps="handled"
+              nestedScrollEnabled={true}
+              bounces={true}
+              contentContainerStyle={styles.formContent}>
+              {/* Name Input */}
+              <View style={styles.inputGroup}>
+                <Text
+                  style={[
+                    styles.groupLabel,
+                    { color: isDark ? '#E2E8F0' : '#1E293B' },
+                  ]}>
+                  Counter Name
+                </Text>
+                <View
+                  style={[
+                    styles.glassInputWrap,
+                    isDark ? styles.glassInputDark : styles.glassInputLight,
+                  ]}>
+                  <TextInput
+                    style={[
+                      styles.textInput,
+                      { color: isDark ? '#FFFFFF' : '#0F172A' },
+                    ]}
+                    placeholder={defaultName}
+                    placeholderTextColor={isDark ? '#64748B' : '#94A3B8'}
+                    value={title}
+                    onChangeText={(t) => {
+                      setTitle(t);
+                      if (errorMsg) setErrorMsg('');
+                    }}
+                    maxLength={40}
+                    returnKeyType="done"
+                  />
+                </View>
+                <Text
+                  style={[
+                    styles.inputHelp,
+                    { color: isDark ? '#64748B' : '#94A3B8' },
+                  ]}>
+                  Leave blank to automatically assign {defaultName}
+                </Text>
+              </View>
 
-                      {/* Simple Option */}
-                      <TouchableOpacity
-                        style={[
-                          styles.segmentBtn,
-                          type === 'simple' &&
-                            (isDark
-                              ? styles.segmentActiveDark
-                              : styles.segmentActiveLight),
-                        ]}
-                        onPress={() => {
-                          triggerHaptic('light');
-                          setType('simple');
-                        }}
-                        activeOpacity={0.8}>
-                        <Ionicons
-                          name="flash"
-                          size={15}
-                          color={
-                            type === 'simple'
-                              ? '#3B82F6'
-                              : isDark
-                              ? '#64748B'
-                              : '#94A3B8'
-                          }
-                        />
-                        <View style={styles.segmentTextCol}>
-                          <Text
-                            style={[
-                              styles.segmentTitle,
-                              {
-                                color:
-                                  type === 'simple'
-                                    ? isDark
-                                      ? '#FFFFFF'
-                                      : '#0F172A'
-                                    : isDark
-                                    ? '#94A3B8'
-                                    : '#64748B',
-                              },
-                            ]}>
-                            Simple
-                          </Text>
-                          <Text
-                            style={[
-                              styles.segmentDesc,
-                              { color: isDark ? '#64748B' : '#94A3B8' },
-                            ]}>
-                            Instant tap
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-
-                  {/* Constraint Toggles */}
-                  <View style={styles.inputGroup}>
-                    <Text
-                      style={[
-                        styles.groupLabel,
-                        { color: isDark ? '#E2E8F0' : '#1E293B' },
-                      ]}>
-                      Counter Constraints
-                    </Text>
-
-                    {/* Disable Negative Values */}
-                    <View
-                      style={[
-                        styles.constraintCard,
-                        isDark ? styles.constraintDark : styles.constraintLight,
-                      ]}>
-                      <View style={styles.constraintInfo}>
-                        <View style={styles.constraintTitleRow}>
-                          <Ionicons name="ban-outline" size={16} color="#EC4899" />
-                          <Text
-                            style={[
-                              styles.constraintTitle,
-                              { color: isDark ? '#F8FAFC' : '#0F172A' },
-                            ]}>
-                            Disable Negative Values
-                          </Text>
-                        </View>
-                        <Text
-                          style={[
-                            styles.constraintSub,
-                            { color: isDark ? '#94A3B8' : '#64748B' },
-                          ]}>
-                          Prevents value from dropping below 0
-                        </Text>
-                      </View>
-                      <Switch
-                        value={!allowNegative}
-                        onValueChange={(val) => {
-                          triggerHaptic('light');
-                          setAllowNegative(!val);
-                        }}
-                        trackColor={{
-                          false: isDark ? '#334155' : '#CBD5E1',
-                          true: '#EC4899',
-                        }}
-                        thumbColor="#FFFFFF"
-                      />
-                    </View>
-
-                    {/* Disable Decrement Option */}
-                    <View
-                      style={[
-                        styles.constraintCard,
-                        isDark ? styles.constraintDark : styles.constraintLight,
-                      ]}>
-                      <View style={styles.constraintInfo}>
-                        <View style={styles.constraintTitleRow}>
-                          <Ionicons
-                            name="arrow-up-circle-outline"
-                            size={16}
-                            color="#F59E0B"
-                          />
-                          <Text
-                            style={[
-                              styles.constraintTitle,
-                              { color: isDark ? '#F8FAFC' : '#0F172A' },
-                            ]}>
-                            Disable Decrement Option
-                          </Text>
-                        </View>
-                        <Text
-                          style={[
-                            styles.constraintSub,
-                            { color: isDark ? '#94A3B8' : '#64748B' },
-                          ]}>
-                          Hides minus (−) button completely (Increment only)
-                        </Text>
-                      </View>
-                      <Switch
-                        value={disableDecrease}
-                        onValueChange={(val) => {
-                          triggerHaptic('light');
-                          setDisableDecrease(val);
-                        }}
-                        trackColor={{
-                          false: isDark ? '#334155' : '#CBD5E1',
-                          true: '#F59E0B',
-                        }}
-                        thumbColor="#FFFFFF"
-                      />
-                    </View>
-                  </View>
-
-                  {/* Initial Value & Step Size Row */}
-                  <View style={styles.rowTwoCols}>
-                    {/* Initial Value */}
-                    <View style={styles.colHalf}>
-                      <Text
-                        style={[
-                          styles.groupLabel,
-                          { color: isDark ? '#E2E8F0' : '#1E293B' },
-                        ]}>
-                        Initial Value
-                      </Text>
-                      <View
-                        style={[
-                          styles.glassInputWrap,
-                          isDark ? styles.glassInputDark : styles.glassInputLight,
-                        ]}>
-                        <TextInput
-                          style={[
-                            styles.textInput,
-                            {
-                              color: isDark ? '#FFFFFF' : '#0F172A',
-                              fontVariant: ['tabular-nums'],
-                            },
-                          ]}
-                          keyboardType="numeric"
-                          value={initialValueStr}
-                          onChangeText={(v) => {
-                            setInitialValueStr(v);
-                            if (errorMsg) setErrorMsg('');
-                          }}
-                        />
-                      </View>
-                    </View>
-
-                    {/* Step Size */}
-                    <View style={styles.colHalf}>
-                      <Text
-                        style={[
-                          styles.groupLabel,
-                          { color: isDark ? '#E2E8F0' : '#1E293B' },
-                        ]}>
-                        Step Size
-                      </Text>
-                      <View style={styles.stepPillsRow}>
-                        {STEP_PRESETS.map((p) => {
-                          const active = stepSize === p;
-                          return (
-                            <TouchableOpacity
-                              key={p}
-                              style={[
-                                styles.stepPill,
-                                active
-                                  ? { backgroundColor: currentTheme.primary }
-                                  : isDark
-                                  ? styles.stepPillDark
-                                  : styles.stepPillLight,
-                              ]}
-                              onPress={() => {
-                                triggerHaptic('light');
-                                setStepSize(p);
-                              }}>
-                              <Text
-                                style={[
-                                  styles.stepPillText,
-                                  {
-                                    color: active
-                                      ? '#FFFFFF'
-                                      : isDark
-                                      ? '#94A3B8'
-                                      : '#475569',
-                                  },
-                                ]}>
-                                {p}
-                              </Text>
-                            </TouchableOpacity>
-                          );
-                        })}
-                      </View>
-                    </View>
-                  </View>
-
-                  {/* Theme Accent Selection */}
-                  <View style={styles.inputGroup}>
-                    <Text
-                      style={[
-                        styles.groupLabel,
-                        { color: isDark ? '#E2E8F0' : '#1E293B' },
-                      ]}>
-                      Visual Palette
-                    </Text>
-                    <View style={styles.paletteRow}>
-                      {COUNTER_THEMES.map((th) => {
-                        const selected = th.id === selectedThemeId;
-                        return (
-                          <TouchableOpacity
-                            key={th.id}
-                            style={[
-                              styles.paletteCircle,
-                              { backgroundColor: th.primary },
-                              selected && styles.paletteSelected,
-                            ]}
-                            onPress={() => {
-                              triggerHaptic('light');
-                              setSelectedThemeId(th.id);
-                            }}>
-                            {selected && (
-                              <Ionicons name="checkmark" size={14} color="#FFFFFF" />
-                            )}
-                          </TouchableOpacity>
-                        );
-                      })}
-                    </View>
-                  </View>
-
-                  {/* Icon Selection */}
-                  <View style={styles.inputGroup}>
-                    <Text
-                      style={[
-                        styles.groupLabel,
-                        { color: isDark ? '#E2E8F0' : '#1E293B' },
-                      ]}>
-                      Icon
-                    </Text>
-                    <ScrollView
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                      contentContainerStyle={styles.iconsRow}>
-                      {AVAILABLE_ICONS.map((iconName) => {
-                        const isSelected = iconName === selectedIcon;
-                        return (
-                          <TouchableOpacity
-                            key={iconName}
-                            style={[
-                              styles.iconSelectBtn,
-                              isSelected
-                                ? {
-                                    backgroundColor: currentTheme.primary,
-                                    borderColor: currentTheme.primary,
-                                  }
-                                : isDark
-                                ? styles.iconBtnDark
-                                : styles.iconBtnLight,
-                            ]}
-                            onPress={() => {
-                              triggerHaptic('light');
-                              setSelectedIcon(iconName);
-                            }}>
-                            <Ionicons
-                              name={iconName as any}
-                              size={18}
-                              color={
-                                isSelected
-                                  ? '#FFFFFF'
-                                  : isDark
-                                  ? '#94A3B8'
-                                  : '#64748B'
-                              }
-                            />
-                          </TouchableOpacity>
-                        );
-                      })}
-                    </ScrollView>
-                  </View>
-
-                  {errorMsg ? (
-                    <View style={styles.errorBanner}>
-                      <Ionicons name="alert-circle" size={16} color="#EF4444" />
-                      <Text style={styles.errorText}>{errorMsg}</Text>
-                    </View>
-                  ) : null}
-                </ScrollView>
-
-                {/* Modal Footer Actions */}
-                <View style={styles.modalFooter}>
+              {/* Segmented Glass Switch for Counter Type */}
+              <View style={styles.inputGroup}>
+                <Text
+                  style={[
+                    styles.groupLabel,
+                    { color: isDark ? '#E2E8F0' : '#1E293B' },
+                  ]}>
+                  Counter Type
+                </Text>
+                <View
+                  style={[
+                    styles.segmentedSwitch,
+                    isDark ? styles.segmentedDark : styles.segmentedLight,
+                  ]}>
+                  {/* Two-Step Option */}
                   <TouchableOpacity
                     style={[
-                      styles.cancelModalBtn,
-                      {
-                        backgroundColor: isDark
-                          ? 'rgba(255, 255, 255, 0.08)'
-                          : 'rgba(0, 0, 0, 0.05)',
-                      },
+                      styles.segmentBtn,
+                      type === 'two-step' &&
+                      (isDark
+                        ? styles.segmentActiveDark
+                        : styles.segmentActiveLight),
                     ]}
-                    onPress={handleClose}>
-                    <Text
-                      style={[
-                        styles.cancelBtnText,
-                        { color: isDark ? '#E2E8F0' : '#475569' },
-                      ]}>
-                      Cancel
-                    </Text>
+                    onPress={() => {
+                      triggerHaptic('light');
+                      setType('two-step');
+                    }}
+                    activeOpacity={0.8}>
+                    <ShieldCheck
+                      size={15}
+                      color={
+                        type === 'two-step'
+                          ? '#10B981'
+                          : isDark
+                            ? '#64748B'
+                            : '#94A3B8'
+                      }
+                      strokeWidth={2.4}
+                    />
+                    <View style={styles.segmentTextCol}>
+                      <Text
+                        style={[
+                          styles.segmentTitle,
+                          {
+                            color:
+                              type === 'two-step'
+                                ? isDark
+                                  ? '#FFFFFF'
+                                  : '#0F172A'
+                                : isDark
+                                  ? '#94A3B8'
+                                  : '#64748B',
+                          },
+                        ]}>
+                        Two-Step
+                      </Text>
+                      <Text
+                        style={[
+                          styles.segmentDesc,
+                          { color: isDark ? '#64748B' : '#94A3B8' },
+                        ]}>
+                        Requires confirm
+                      </Text>
+                    </View>
                   </TouchableOpacity>
 
+                  {/* Simple Option */}
                   <TouchableOpacity
-                    style={styles.submitModalBtn}
-                    onPress={handleCreate}
-                    activeOpacity={0.85}>
-                    <LinearGradient
-                      colors={currentTheme.gradient}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
-                      style={styles.submitGradient}>
-                      <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
-                      <Text style={styles.submitBtnText}>Create Counter</Text>
-                    </LinearGradient>
+                    style={[
+                      styles.segmentBtn,
+                      type === 'simple' &&
+                      (isDark
+                        ? styles.segmentActiveDark
+                        : styles.segmentActiveLight),
+                    ]}
+                    onPress={() => {
+                      triggerHaptic('light');
+                      setType('simple');
+                    }}
+                    activeOpacity={0.8}>
+                    <Zap
+                      size={15}
+                      color={
+                        type === 'simple'
+                          ? '#3B82F6'
+                          : isDark
+                            ? '#64748B'
+                            : '#94A3B8'
+                      }
+                      strokeWidth={2.4}
+                    />
+                    <View style={styles.segmentTextCol}>
+                      <Text
+                        style={[
+                          styles.segmentTitle,
+                          {
+                            color:
+                              type === 'simple'
+                                ? isDark
+                                  ? '#FFFFFF'
+                                  : '#0F172A'
+                                : isDark
+                                  ? '#94A3B8'
+                                  : '#64748B',
+                          },
+                        ]}>
+                        Simple
+                      </Text>
+                      <Text
+                        style={[
+                          styles.segmentDesc,
+                          { color: isDark ? '#64748B' : '#94A3B8' },
+                        ]}>
+                        Instant tap
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 </View>
               </View>
-            </KeyboardAvoidingView>
-          </TouchableWithoutFeedback>
-        </View>
-      </TouchableWithoutFeedback>
+
+              {/* Constraint Toggles */}
+              <View style={styles.inputGroup}>
+                <Text
+                  style={[
+                    styles.groupLabel,
+                    { color: isDark ? '#E2E8F0' : '#1E293B' },
+                  ]}>
+                  Counter Constraints
+                </Text>
+
+                {/* Disable Negative Values */}
+                <View
+                  style={[
+                    styles.constraintCard,
+                    isDark ? styles.constraintDark : styles.constraintLight,
+                  ]}>
+                  <View style={styles.constraintInfo}>
+                    <View style={styles.constraintTitleRow}>
+                      <Ban size={16} color="#EC4899" strokeWidth={2.2} />
+                      <Text
+                        style={[
+                          styles.constraintTitle,
+                          { color: isDark ? '#F8FAFC' : '#0F172A' },
+                        ]}>
+                        Disable Negative Values
+                      </Text>
+                    </View>
+                    <Text
+                      style={[
+                        styles.constraintSub,
+                        { color: isDark ? '#94A3B8' : '#64748B' },
+                      ]}>
+                      Prevents value from dropping below 0
+                    </Text>
+                  </View>
+                  <Switch
+                    value={!allowNegative}
+                    onValueChange={(val) => {
+                      triggerHaptic('light');
+                      setAllowNegative(!val);
+                    }}
+                    trackColor={{
+                      false: isDark ? '#334155' : '#CBD5E1',
+                      true: '#EC4899',
+                    }}
+                    thumbColor="#FFFFFF"
+                  />
+                </View>
+
+                {/* Disable Decrement Option */}
+                <View
+                  style={[
+                    styles.constraintCard,
+                    isDark ? styles.constraintDark : styles.constraintLight,
+                  ]}>
+                  <View style={styles.constraintInfo}>
+                    <View style={styles.constraintTitleRow}>
+                      <ArrowUpCircle
+                        size={16}
+                        color="#F59E0B"
+                        strokeWidth={2.2}
+                      />
+                      <Text
+                        style={[
+                          styles.constraintTitle,
+                          { color: isDark ? '#F8FAFC' : '#0F172A' },
+                        ]}>
+                        Disable Decrement Option
+                      </Text>
+                    </View>
+                    <Text
+                      style={[
+                        styles.constraintSub,
+                        { color: isDark ? '#94A3B8' : '#64748B' },
+                      ]}>
+                      Hides minus (−) button completely (Increment only)
+                    </Text>
+                  </View>
+                  <Switch
+                    value={disableDecrease}
+                    onValueChange={(val) => {
+                      triggerHaptic('light');
+                      setDisableDecrease(val);
+                    }}
+                    trackColor={{
+                      false: isDark ? '#334155' : '#CBD5E1',
+                      true: '#F59E0B',
+                    }}
+                    thumbColor="#FFFFFF"
+                  />
+                </View>
+              </View>
+
+              {/* Initial Value & Step Size Row */}
+              <View style={styles.rowTwoCols}>
+                {/* Initial Value */}
+                <View style={styles.colHalf}>
+                  <Text
+                    style={[
+                      styles.groupLabel,
+                      { color: isDark ? '#E2E8F0' : '#1E293B' },
+                    ]}>
+                    Initial Value
+                  </Text>
+                  <View
+                    style={[
+                      styles.glassInputWrap,
+                      isDark ? styles.glassInputDark : styles.glassInputLight,
+                    ]}>
+                    <TextInput
+                      style={[
+                        styles.textInput,
+                        {
+                          color: isDark ? '#FFFFFF' : '#0F172A',
+                          fontVariant: ['tabular-nums'],
+                        },
+                      ]}
+                      keyboardType="numeric"
+                      value={initialValueStr}
+                      onChangeText={(v) => {
+                        setInitialValueStr(v);
+                        if (errorMsg) setErrorMsg('');
+                      }}
+                    />
+                  </View>
+                </View>
+
+                {/* Step Size */}
+                <View style={styles.colHalf}>
+                  <Text
+                    style={[
+                      styles.groupLabel,
+                      { color: isDark ? '#E2E8F0' : '#1E293B' },
+                    ]}>
+                    Step Size
+                  </Text>
+                  <View style={styles.stepPillsRow}>
+                    {STEP_PRESETS.map((p) => {
+                      const active = stepSize === p;
+                      return (
+                        <TouchableOpacity
+                          key={p}
+                          style={[
+                            styles.stepPill,
+                            active
+                              ? { backgroundColor: currentTheme.primary }
+                              : isDark
+                                ? styles.stepPillDark
+                                : styles.stepPillLight,
+                          ]}
+                          onPress={() => {
+                            triggerHaptic('light');
+                            setStepSize(p);
+                          }}>
+                          <Text
+                            style={[
+                              styles.stepPillText,
+                              {
+                                color: active
+                                  ? '#FFFFFF'
+                                  : isDark
+                                    ? '#94A3B8'
+                                    : '#475569',
+                              },
+                            ]}>
+                            {p}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </View>
+              </View>
+
+              {/* Theme Accent Selection */}
+              <View style={styles.inputGroup}>
+                <Text
+                  style={[
+                    styles.groupLabel,
+                    { color: isDark ? '#E2E8F0' : '#1E293B' },
+                  ]}>
+                  Visual Palette
+                </Text>
+                <View style={styles.paletteRow}>
+                  {COUNTER_THEMES.map((th) => {
+                    const selected = th.id === selectedThemeId;
+                    return (
+                      <TouchableOpacity
+                        key={th.id}
+                        style={[
+                          styles.paletteCircle,
+                          { backgroundColor: th.primary },
+                          selected && styles.paletteSelected,
+                        ]}
+                        onPress={() => {
+                          triggerHaptic('light');
+                          setSelectedThemeId(th.id);
+                        }}>
+                        {selected && (
+                          <Check size={14} color="#FFFFFF" strokeWidth={3} />
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+
+              {/* Icon Selection */}
+              <View style={styles.inputGroup}>
+                <Text
+                  style={[
+                    styles.groupLabel,
+                    { color: isDark ? '#E2E8F0' : '#1E293B' },
+                  ]}>
+                  Icon
+                </Text>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  nestedScrollEnabled={true}
+                  keyboardShouldPersistTaps="handled"
+                  contentContainerStyle={styles.iconsRow}>
+                  {AVAILABLE_ICONS.map((iconName) => {
+                    const isSelected = iconName === selectedIcon;
+                    return (
+                      <TouchableOpacity
+                        key={iconName}
+                        style={[
+                          styles.iconSelectBtn,
+                          isSelected
+                            ? {
+                              backgroundColor: currentTheme.primary,
+                              borderColor: currentTheme.primary,
+                            }
+                            : isDark
+                              ? styles.iconBtnDark
+                              : styles.iconBtnLight,
+                        ]}
+                        onPress={() => {
+                          triggerHaptic('light');
+                          setSelectedIcon(iconName);
+                        }}>
+                        <CounterIcon
+                          name={iconName}
+                          size={18}
+                          color={
+                            isSelected
+                              ? '#FFFFFF'
+                              : isDark
+                                ? '#94A3B8'
+                                : '#64748B'
+                          }
+                          strokeWidth={2.2}
+                        />
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              </View>
+
+              {errorMsg ? (
+                <View style={styles.errorBanner}>
+                  <AlertCircle size={16} color="#EF4444" strokeWidth={2} />
+                  <Text style={styles.errorText}>{errorMsg}</Text>
+                </View>
+              ) : null}
+            </ScrollView>
+
+            {/* Modal Footer Actions */}
+            <View
+              style={[
+                styles.modalFooter,
+                {
+                  borderTopColor: isDark
+                    ? 'rgba(255, 255, 255, 0.08)'
+                    : 'rgba(0, 0, 0, 0.08)',
+                },
+              ]}>
+              <TouchableOpacity
+                style={[
+                  styles.cancelModalBtn,
+                  {
+                    backgroundColor: isDark
+                      ? 'rgba(255, 255, 255, 0.08)'
+                      : 'rgba(0, 0, 0, 0.05)',
+                  },
+                ]}
+                onPress={handleClose}>
+                <Text
+                  style={[
+                    styles.cancelBtnText,
+                    { color: isDark ? '#E2E8F0' : '#475569' },
+                  ]}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.submitModalBtn,
+                  {
+                    shadowColor: currentTheme.primary,
+                  },
+                ]}
+                onPress={handleCreate}
+                activeOpacity={0.85}>
+                <LinearGradient
+                  colors={currentTheme.gradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.submitGradient}>
+                  <View style={styles.modalBtnSheen} />
+                  <View style={styles.submitIconBadge}>
+                    <Plus size={15} color="#FFFFFF" strokeWidth={2.8} />
+                  </View>
+                  <Text style={styles.submitBtnText}>Add Counter</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
@@ -643,11 +679,13 @@ const styles = StyleSheet.create({
   keyboardContainer: {
     width: '100%',
     maxWidth: 520,
+    maxHeight: '90%',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   modalCard: {
     width: '100%',
-    maxHeight: '90%',
+    maxHeight: '100%',
     borderRadius: 28,
     borderWidth: 1,
     overflow: 'hidden',
@@ -669,11 +707,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 22,
-    paddingTop: 20,
-    paddingBottom: 16,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
   },
   headerTitleGroup: {
     flexDirection: 'row',
@@ -681,8 +718,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerIconWrap: {
-    width: 40,
-    height: 40,
+    width: 38,
+    height: 38,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
@@ -691,10 +728,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '800',
     letterSpacing: -0.2,
-  },
-  modalSubtitle: {
-    fontSize: 11.5,
-    marginTop: 2,
   },
   closeIconBtn: {
     width: 32,
@@ -705,10 +738,13 @@ const styles = StyleSheet.create({
   },
   formScroll: {
     maxHeight: 460,
+    flexShrink: 1,
   },
   formContent: {
-    padding: 22,
-    gap: 18,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 20,
+    gap: 16,
   },
   inputGroup: {
     gap: 8,
@@ -916,7 +952,9 @@ const styles = StyleSheet.create({
   cancelModalBtn: {
     flex: 1,
     paddingVertical: 13,
-    borderRadius: 16,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -926,19 +964,49 @@ const styles = StyleSheet.create({
   },
   submitModalBtn: {
     flex: 2,
-    borderRadius: 16,
-    overflow: 'hidden',
+    borderRadius: 18,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.45,
+    shadowRadius: 10,
+    elevation: 6,
   },
   submitGradient: {
     paddingVertical: 13,
+    paddingHorizontal: 16,
+    borderRadius: 18,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.32)',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  modalBtnSheen: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '46%',
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+  },
+  submitIconBadge: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.35)',
   },
   submitBtnText: {
     color: '#FFFFFF',
-    fontSize: 14.5,
+    fontSize: 15,
     fontWeight: '800',
+    letterSpacing: -0.2,
   },
 });

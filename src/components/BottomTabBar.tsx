@@ -7,13 +7,13 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Layers, Settings } from 'lucide-react-native';
 import { useCounters } from '@/context/CounterContext';
 import { triggerHaptic } from '@/utils/haptics';
 
 export function BottomTabBar() {
   const insets = useSafeAreaInsets();
-  const { activeTab, setActiveTab, stats, themeMode } = useCounters();
+  const { activeTab, setActiveTab, themeMode } = useCounters();
   const isDark = themeMode === 'dark';
 
   const [countersTabScale] = useState(() => new Animated.Value(1));
@@ -102,49 +102,20 @@ export function BottomTabBar() {
             ]}
             onPress={() => handleTabPress('counters')}
             activeOpacity={0.8}
-            accessibilityLabel={`Counters tab, ${stats.total} total`}
+            accessibilityLabel="Counters tab"
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === 'counters' }}>
-            <View style={styles.iconBadgeRow}>
-              <Ionicons
-                name={activeTab === 'counters' ? 'layers' : 'layers-outline'}
-                size={20}
-                color={
-                  activeTab === 'counters'
-                    ? '#6366F1'
-                    : isDark
-                    ? '#94A3B8'
-                    : '#64748B'
-                }
-              />
-              {/* Dynamic Counter Count Badge */}
-              <View
-                style={[
-                  styles.badgePill,
-                  activeTab === 'counters'
-                    ? styles.badgePillActive
-                    : isDark
-                    ? styles.badgePillInactiveDark
-                    : styles.badgePillInactiveLight,
-                ]}>
-                <Text
-                  style={[
-                    styles.badgeText,
-                    activeTab === 'counters' && styles.badgeTextActive,
-                    {
-                      color:
-                        activeTab === 'counters'
-                          ? '#FFFFFF'
-                          : isDark
-                          ? '#94A3B8'
-                          : '#64748B',
-                    },
-                  ]}>
-                  {stats.total}
-                </Text>
-              </View>
-            </View>
-
+            <Layers
+              size={19}
+              color={
+                activeTab === 'counters'
+                  ? '#6366F1'
+                  : isDark
+                  ? '#94A3B8'
+                  : '#64748B'
+              }
+              strokeWidth={activeTab === 'counters' ? 2.4 : 1.8}
+            />
             <Text
               style={[
                 styles.tabLabel,
@@ -182,9 +153,8 @@ export function BottomTabBar() {
             accessibilityLabel="Settings tab"
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === 'settings' }}>
-            <Ionicons
-              name={activeTab === 'settings' ? 'settings' : 'settings-outline'}
-              size={20}
+            <Settings
+              size={19}
               color={
                 activeTab === 'settings'
                   ? '#6366F1'
@@ -192,6 +162,7 @@ export function BottomTabBar() {
                   ? '#94A3B8'
                   : '#64748B'
               }
+              strokeWidth={activeTab === 'settings' ? 2.4 : 1.8}
             />
             <Text
               style={[
@@ -287,34 +258,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(99, 102, 241, 0.1)',
     borderColor: 'rgba(99, 102, 241, 0.25)',
     borderWidth: 1,
-  },
-  iconBadgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-  },
-  badgePill: {
-    paddingHorizontal: 6,
-    paddingVertical: 1.5,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  badgePillActive: {
-    backgroundColor: '#6366F1',
-  },
-  badgePillInactiveDark: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  badgePillInactiveLight: {
-    backgroundColor: 'rgba(0, 0, 0, 0.06)',
-  },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  badgeTextActive: {
-    color: '#FFFFFF',
   },
   tabLabel: {
     fontSize: 13.5,

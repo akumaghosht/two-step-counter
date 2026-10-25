@@ -3,14 +3,24 @@ import {
   Animated,
   Easing,
   Modal,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import {
+  AlertCircle,
+  ArrowRight,
+  Check,
+  RotateCcw,
+  Timer,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  X,
+} from 'lucide-react-native';
 import { triggerHaptic } from '@/utils/haptics';
 import { useCounters } from '@/context/CounterContext';
 
@@ -133,35 +143,35 @@ export function ConfirmationModal({ config, onClose }: ConfirmationModalProps) {
     switch (variant) {
       case 'increment':
         return {
-          icon: 'trending-up' as const,
+          Icon: TrendingUp,
           color: '#10B981',
           gradient: ['#10B981', '#059669'] as [string, string],
           tag: 'Two-Step Verification',
         };
       case 'decrement':
         return {
-          icon: 'trending-down' as const,
+          Icon: TrendingDown,
           color: '#F59E0B',
           gradient: ['#F59E0B', '#D97706'] as [string, string],
           tag: 'Two-Step Verification',
         };
       case 'reset':
         return {
-          icon: 'refresh' as const,
+          Icon: RotateCcw,
           color: '#EC4899',
           gradient: ['#EC4899', '#DB2777'] as [string, string],
           tag: 'Reset Counter',
         };
       case 'delete':
         return {
-          icon: 'trash' as const,
+          Icon: Trash2,
           color: '#EF4444',
           gradient: ['#EF4444', '#DC2626'] as [string, string],
           tag: 'Delete Counter',
         };
       case 'warning-negative':
         return {
-          icon: 'alert-circle' as const,
+          Icon: AlertCircle,
           color: '#F59E0B',
           gradient: ['#F59E0B', '#D97706'] as [string, string],
           tag: 'Rule Restricted',
@@ -178,20 +188,31 @@ export function ConfirmationModal({ config, onClose }: ConfirmationModalProps) {
     onClose();
   };
 
+  const ConfirmActionIcon = isDelete
+    ? Trash2
+    : variant === 'reset'
+    ? RotateCcw
+    : isWarningOnly
+    ? AlertCircle
+    : Check;
+
   return (
     <Modal
       transparent
       animationType="fade"
       visible={config.visible}
       onRequestClose={handleCancel}>
-      <TouchableWithoutFeedback onPress={handleCancel}>
-        <View style={styles.backdrop}>
-          <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-            <View
-              style={[
-                styles.dialogCard,
-                isDark ? styles.cardDark : styles.cardLight,
-              ]}>
+      <View style={styles.backdrop}>
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={handleCancel}
+          accessibilityLabel="Close confirmation backdrop"
+        />
+        <View
+          style={[
+            styles.dialogCard,
+            isDark ? styles.cardDark : styles.cardLight,
+          ]}>
               {/* Header Badge */}
               <View style={styles.headerRow}>
                 <View
@@ -203,7 +224,7 @@ export function ConfirmationModal({ config, onClose }: ConfirmationModalProps) {
                         : `${accent.color}18`,
                     },
                   ]}>
-                  <Ionicons name={accent.icon} size={15} color={accent.color} />
+                  <accent.Icon size={15} color={accent.color} strokeWidth={2.4} />
                   <Text style={[styles.badgeText, { color: accent.color }]}>
                     {accent.tag}
                   </Text>
@@ -222,10 +243,10 @@ export function ConfirmationModal({ config, onClose }: ConfirmationModalProps) {
                   ]}
                   accessibilityLabel="Close confirmation modal"
                   accessibilityRole="button">
-                  <Ionicons
-                    name="close"
+                  <X
                     size={18}
                     color={isDark ? '#94A3B8' : '#64748B'}
+                    strokeWidth={2}
                   />
                 </TouchableOpacity>
               </View>
@@ -286,10 +307,10 @@ export function ConfirmationModal({ config, onClose }: ConfirmationModalProps) {
                             : 'rgba(0, 0, 0, 0.04)',
                         },
                       ]}>
-                      <Ionicons
-                        name="arrow-forward"
+                      <ArrowRight
                         size={20}
                         color={accent.color}
+                        strokeWidth={2.4}
                       />
                     </View>
 
@@ -351,8 +372,7 @@ export function ConfirmationModal({ config, onClose }: ConfirmationModalProps) {
                     />
                   </View>
                   <View style={styles.timerSubTextRow}>
-                    <Ionicons
-                      name="timer-outline"
+                    <Timer
                       size={13}
                       color={isDark ? '#64748B' : '#94A3B8'}
                     />
@@ -407,16 +427,10 @@ export function ConfirmationModal({ config, onClose }: ConfirmationModalProps) {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.confirmBtnGradient}>
-                    <Ionicons
-                      name={
-                        isDelete
-                          ? 'trash-outline'
-                          : variant === 'reset'
-                          ? 'refresh'
-                          : 'checkmark'
-                      }
+                    <ConfirmActionIcon
                       size={18}
                       color="#FFFFFF"
+                      strokeWidth={2.4}
                       style={{ marginRight: 6 }}
                     />
                     <Text style={styles.confirmBtnText}>
@@ -426,10 +440,8 @@ export function ConfirmationModal({ config, onClose }: ConfirmationModalProps) {
                 </TouchableOpacity>
               </View>
             </View>
-          </TouchableWithoutFeedback>
-        </View>
-      </TouchableWithoutFeedback>
-    </Modal>
+          </View>
+        </Modal>
   );
 }
 

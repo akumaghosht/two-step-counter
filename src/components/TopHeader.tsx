@@ -1,14 +1,41 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useRef } from 'react';
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Plus } from 'lucide-react-native';
 import { useCounters } from '@/context/CounterContext';
 import { triggerHaptic } from '@/utils/haptics';
 
 export function TopHeader() {
   const insets = useSafeAreaInsets();
-  const { activeTab, themeMode, setIsCreateModalOpen, stats } = useCounters();
+  const { activeTab, themeMode, setIsCreateModalOpen } = useCounters();
   const isDark = themeMode === 'dark';
+
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.94,
+      speed: 35,
+      bounciness: 0,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      speed: 22,
+      bounciness: 5,
+      useNativeDriver: true,
+    }).start();
+  };
 
   const handlePlusPress = () => {
     triggerHaptic('medium');
@@ -38,7 +65,7 @@ export function TopHeader() {
       />
 
       <View style={styles.contentRow}>
-        {/* Left Title with App Status */}
+        {/* Left Title */}
         <View style={styles.titleGroup}>
           <Text
             style={[
@@ -47,34 +74,41 @@ export function TopHeader() {
             ]}>
             {activeTab === 'counters' ? 'Counters' : 'Settings'}
           </Text>
-
-          {activeTab === 'counters' && (
-            <View style={styles.counterCountPill}>
-              <View style={styles.liveGreenDot} />
-              <Text
-                style={[
-                  styles.counterCountText,
-                  { color: isDark ? '#94A3B8' : '#64748B' },
-                ]}>
-                {stats.total === 1 ? '1 counter' : `${stats.total} counters`}
-              </Text>
-            </View>
-          )}
         </View>
 
-        {/* Right Action: Liquid Glass '+' Button (on Counters tab) */}
+        {/* Right Action: Glowing Gradient Pill Button */}
         {activeTab === 'counters' ? (
-          <TouchableOpacity
-            style={[
-              styles.liquidGlassPlusBtn,
-              isDark ? styles.plusBtnDark : styles.plusBtnLight,
-            ]}
-            onPress={handlePlusPress}
-            activeOpacity={0.75}
-            accessibilityLabel="Create Counter"
-            accessibilityRole="button">
-            <Ionicons name="add" size={22} color="#FFFFFF" />
-          </TouchableOpacity>
+          <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+            <TouchableOpacity
+              style={[
+                styles.addBtnWrapper,
+                isDark ? styles.addBtnWrapperDark : styles.addBtnWrapperLight,
+              ]}
+              onPress={handlePlusPress}
+              onPressIn={handlePressIn}
+              onPressOut={handlePressOut}
+              activeOpacity={0.88}
+              accessibilityLabel="Add New Counter"
+              accessibilityRole="button">
+              <LinearGradient
+                colors={
+                  isDark
+                    ? ['#6366F1', '#8B5CF6']
+                    : ['#4F46E5', '#7C3AED']
+                }
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.addBtnGradient}>
+                {/* Specular sheen on top half for realistic liquid glass look */}
+                <View style={styles.btnSpecularSheen} />
+
+                <View style={styles.iconCircle}>
+                  <Plus size={14} color="#FFFFFF" strokeWidth={2.8} />
+                </View>
+                <Text style={styles.addBtnText}>New Counter</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </Animated.View>
         ) : (
           <View style={styles.placeholderRight} />
         )}
@@ -128,47 +162,57 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     letterSpacing: -0.5,
   },
-  counterCountPill: {
+  addBtnWrapper: {
+    borderRadius: 22,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.38,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  addBtnWrapperDark: {
+    shadowColor: '#818CF8',
+  },
+  addBtnWrapperLight: {
+    shadowColor: '#4F46E5',
+  },
+  addBtnGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    gap: 7,
+    paddingVertical: 7,
+    paddingLeft: 7,
+    paddingRight: 14,
+    borderRadius: 22,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: 'rgba(255, 255, 255, 0.32)',
+    position: 'relative',
+    overflow: 'hidden',
   },
-  liveGreenDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#10B981',
+  btnSpecularSheen: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '48%',
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
   },
-  counterCountText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  liquidGlassPlusBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+  iconCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 4,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
   },
-  plusBtnDark: {
-    backgroundColor: '#6366F1',
-    borderColor: 'rgba(255, 255, 255, 0.35)',
-  },
-  plusBtnLight: {
-    backgroundColor: '#4F46E5',
-    borderColor: 'rgba(255, 255, 255, 0.5)',
+  addBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13.5,
+    fontWeight: '700',
+    letterSpacing: -0.2,
   },
   placeholderRight: {
     width: 42,

@@ -1,7 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import {
+  Calculator,
+  Lock,
+  Plus,
+  ShieldCheck,
+  Sparkles,
+  Zap,
+} from 'lucide-react-native';
 import { triggerHaptic } from '@/utils/haptics';
 import { useCounters } from '@/context/CounterContext';
 
@@ -33,7 +40,7 @@ export function EmptyState({ onAddPress, onLoadSamples }: EmptyStateProps) {
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.iconCircle}>
-          <Ionicons name="calculator-outline" size={44} color="#FFFFFF" />
+          <Calculator size={42} color="#FFFFFF" strokeWidth={1.8} />
         </LinearGradient>
       </View>
 
@@ -60,7 +67,7 @@ export function EmptyState({ onAddPress, onLoadSamples }: EmptyStateProps) {
             styles.featurePill,
             isDark ? styles.pillDark : styles.pillLight,
           ]}>
-          <Ionicons name="shield-checkmark" size={13} color="#10B981" />
+          <ShieldCheck size={14} color="#10B981" />
           <Text
             style={[
               styles.featurePillText,
@@ -74,7 +81,7 @@ export function EmptyState({ onAddPress, onLoadSamples }: EmptyStateProps) {
             styles.featurePill,
             isDark ? styles.pillDark : styles.pillLight,
           ]}>
-          <Ionicons name="flash" size={13} color="#3B82F6" />
+          <Zap size={14} color="#3B82F6" />
           <Text
             style={[
               styles.featurePillText,
@@ -88,7 +95,7 @@ export function EmptyState({ onAddPress, onLoadSamples }: EmptyStateProps) {
             styles.featurePill,
             isDark ? styles.pillDark : styles.pillLight,
           ]}>
-          <Ionicons name="lock-closed" size={13} color="#F59E0B" />
+          <Lock size={14} color="#F59E0B" />
           <Text
             style={[
               styles.featurePillText,
@@ -106,15 +113,18 @@ export function EmptyState({ onAddPress, onLoadSamples }: EmptyStateProps) {
           triggerHaptic('medium');
           onAddPress();
         }}
-        activeOpacity={0.85}
+        activeOpacity={0.88}
         accessibilityLabel="Create Your First Counter"
         accessibilityRole="button">
         <LinearGradient
-          colors={['#6366F1', '#4F46E5']}
+          colors={['#6366F1', '#8B5CF6']}
           start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
+          end={{ x: 1, y: 1 }}
           style={styles.primaryBtnGradient}>
-          <Ionicons name="add" size={22} color="#FFFFFF" />
+          <View style={styles.btnSpecularSheen} />
+          <View style={styles.btnIconBadge}>
+            <Plus size={16} color="#FFFFFF" strokeWidth={2.8} />
+          </View>
           <Text style={styles.primaryBtnText}>Create Your First Counter</Text>
         </LinearGradient>
       </TouchableOpacity>
@@ -139,7 +149,7 @@ export function EmptyState({ onAddPress, onLoadSamples }: EmptyStateProps) {
         activeOpacity={0.7}
         accessibilityLabel="Load 3 Ready-to-use Counters"
         accessibilityRole="button">
-        <Ionicons name="sparkles" size={16} color="#818CF8" />
+        <Sparkles size={16} color="#818CF8" />
         <Text
           style={[
             styles.sampleBtnText,
@@ -228,22 +238,52 @@ const styles = StyleSheet.create({
   primaryBtnWrapper: {
     width: '100%',
     maxWidth: 300,
-    borderRadius: 18,
-    overflow: 'hidden',
+    borderRadius: 20,
     marginBottom: 12,
+    shadowColor: '#6366F1',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 7,
   },
   primaryBtnGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    gap: 10,
+    paddingVertical: 13,
+    paddingHorizontal: 18,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.32)',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  btnSpecularSheen: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '46%',
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  btnIconBadge: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.35)',
   },
   primaryBtnText: {
     fontSize: 15,
     fontWeight: '800',
     color: '#FFFFFF',
+    letterSpacing: -0.2,
   },
   sampleBtn: {
     flexDirection: 'row',

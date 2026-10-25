@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import { Layers, Plus, ShieldCheck, Zap } from 'lucide-react-native';
 import { FilterCategory } from '@/types/counter';
 import { triggerHaptic } from '@/utils/haptics';
 
@@ -35,7 +35,7 @@ export function HeaderStats({
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.brandIconGradient}>
-              <Ionicons name="layers" size={18} color="#FFFFFF" />
+              <Layers size={18} color="#FFFFFF" />
             </LinearGradient>
           </View>
           <View>
@@ -55,13 +55,16 @@ export function HeaderStats({
             triggerHaptic('medium');
             onAddPress();
           }}
-          activeOpacity={0.85}>
+          activeOpacity={0.88}>
           <LinearGradient
-            colors={['#6366F1', '#4F46E5']}
+            colors={['#6366F1', '#8B5CF6']}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={styles.addBtnGradient}>
-            <Ionicons name="add" size={18} color="#FFFFFF" />
+            <View style={styles.btnSpecularSheen} />
+            <View style={styles.iconCircle}>
+              <Plus size={14} color="#FFFFFF" strokeWidth={2.8} />
+            </View>
             <Text style={styles.addBtnText}>New Counter</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -78,7 +81,7 @@ export function HeaderStats({
         <View style={styles.bentoCard}>
           <Text style={styles.bentoLabel}>TWO-STEP</Text>
           <View style={styles.statInline}>
-            <Ionicons name="shield-checkmark" size={14} color="#34D399" />
+            <ShieldCheck size={14} color="#34D399" />
             <Text style={[styles.bentoValue, { color: '#6EE7B7' }]}>{twoStepCount}</Text>
           </View>
           <Text style={styles.bentoSub}>Accident safe</Text>
@@ -87,7 +90,7 @@ export function HeaderStats({
         <View style={styles.bentoCard}>
           <Text style={styles.bentoLabel}>INSTANT</Text>
           <View style={styles.statInline}>
-            <Ionicons name="flash" size={14} color="#60A5FA" />
+            <Zap size={14} color="#60A5FA" />
             <Text style={[styles.bentoValue, { color: '#93C5FD' }]}>{simpleCount}</Text>
           </View>
           <Text style={styles.bentoSub}>Fast taps</Text>
@@ -123,9 +126,8 @@ export function HeaderStats({
             triggerHaptic('light');
             onSelectFilter('two-step');
           }}>
-          <Ionicons
-            name="shield-checkmark"
-            size={12}
+          <ShieldCheck
+            size={13}
             color={selectedFilter === 'two-step' ? '#34D399' : '#64748B'}
           />
           <Text
@@ -146,9 +148,8 @@ export function HeaderStats({
             triggerHaptic('light');
             onSelectFilter('simple');
           }}>
-          <Ionicons
-            name="flash"
-            size={12}
+          <Zap
+            size={13}
             color={selectedFilter === 'simple' ? '#60A5FA' : '#64748B'}
           />
           <Text
@@ -218,25 +219,51 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
   },
   addBtnWrapper: {
-    borderRadius: 16,
-    overflow: 'hidden',
+    borderRadius: 22,
     shadowColor: '#6366F1',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
+    shadowOpacity: 0.38,
     shadowRadius: 10,
     elevation: 6,
   },
   addBtnGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    gap: 7,
+    paddingVertical: 7,
+    paddingLeft: 7,
+    paddingRight: 14,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.32)',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  btnSpecularSheen: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '48%',
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+  },
+  iconCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
   },
   addBtnText: {
-    fontSize: 14,
-    fontWeight: '800',
+    fontSize: 13.5,
+    fontWeight: '700',
     color: '#FFFFFF',
+    letterSpacing: -0.2,
   },
   bentoStatsRow: {
     flexDirection: 'row',

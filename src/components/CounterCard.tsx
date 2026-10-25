@@ -7,7 +7,16 @@ import {
   View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import {
+  Lock,
+  Minus,
+  Plus,
+  RotateCcw,
+  ShieldCheck,
+  Trash2,
+  Zap,
+} from 'lucide-react-native';
+import { CounterIcon } from '@/components/CounterIcon';
 import { CounterItem } from '@/types/counter';
 import { getThemeById } from '@/constants/palettes';
 import { triggerHaptic } from '@/utils/haptics';
@@ -121,10 +130,11 @@ export function CounterCard({
                     : 'rgba(99, 102, 241, 0.12)',
                 },
               ]}>
-              <Ionicons
-                name={(counter.iconName || 'sparkles') as any}
-                size={18}
+              <CounterIcon
+                name={counter.iconName || 'sparkles'}
+                size={15}
                 color={theme.primary}
+                strokeWidth={2.2}
               />
             </View>
 
@@ -142,12 +152,12 @@ export function CounterCard({
               <View style={styles.badgesRow}>
                 {isTwoStep ? (
                   <View style={[styles.badgePill, styles.twoStepPill]}>
-                    <Ionicons name="shield-checkmark" size={10} color="#10B981" />
+                    <ShieldCheck size={9.5} color="#10B981" strokeWidth={2.5} />
                     <Text style={styles.twoStepPillText}>Two-Step</Text>
                   </View>
                 ) : (
                   <View style={[styles.badgePill, styles.simplePill]}>
-                    <Ionicons name="flash" size={10} color="#3B82F6" />
+                    <Zap size={9.5} color="#3B82F6" strokeWidth={2.5} />
                     <Text style={styles.simplePillText}>Simple</Text>
                   </View>
                 )}
@@ -178,7 +188,7 @@ export function CounterCard({
                           : 'rgba(245, 158, 11, 0.12)',
                       },
                     ]}>
-                    <Ionicons name="lock-closed" size={9} color="#F59E0B" />
+                    <Lock size={8.5} color="#F59E0B" strokeWidth={2.5} />
                     <Text style={styles.incOnlyText}>Inc Only</Text>
                   </View>
                 )}
@@ -213,13 +223,14 @@ export function CounterCard({
                     : 'rgba(0, 0, 0, 0.04)',
                 },
               ]}
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               onPress={() => onReset(counter)}
               accessibilityLabel={`Reset ${counter.title}`}
               accessibilityRole="button">
-              <Ionicons
-                name="refresh-outline"
-                size={16}
+              <RotateCcw
+                size={13}
                 color={isDark ? '#94A3B8' : '#64748B'}
+                strokeWidth={2}
               />
             </TouchableOpacity>
 
@@ -233,10 +244,11 @@ export function CounterCard({
                     : 'rgba(239, 68, 68, 0.08)',
                 },
               ]}
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               onPress={() => onDelete(counter)}
               accessibilityLabel={`Delete ${counter.title}`}
               accessibilityRole="button">
-              <Ionicons name="trash-outline" size={16} color="#EF4444" />
+              <Trash2 size={13} color="#EF4444" strokeWidth={2} />
             </TouchableOpacity>
           </View>
         </View>
@@ -256,17 +268,6 @@ export function CounterCard({
             accessibilityLabel={`Current value is ${counter.value}`}>
             {counter.value}
           </Text>
-
-          {counter.notes ? (
-            <Text
-              style={[
-                styles.notesText,
-                { color: isDark ? '#64748B' : '#64748B' },
-              ]}
-              numberOfLines={1}>
-              {counter.notes}
-            </Text>
-          ) : null}
         </View>
 
         {/* Main Controls Row */}
@@ -291,9 +292,8 @@ export function CounterCard({
                 accessibilityLabel={`Decrease by ${step}`}
                 accessibilityRole="button"
                 accessibilityState={{ disabled: isDecDisabled }}>
-                <Ionicons
-                  name="remove"
-                  size={22}
+                <Minus
+                  size={16}
                   color={
                     isDecDisabled
                       ? isDark
@@ -303,6 +303,7 @@ export function CounterCard({
                       ? '#E2E8F0'
                       : '#1E293B'
                   }
+                  strokeWidth={2.5}
                 />
                 <Text
                   style={[
@@ -340,7 +341,7 @@ export function CounterCard({
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.incGradient}>
-                <Ionicons name="add" size={24} color="#FFFFFF" />
+                <Plus size={16} color="#FFFFFF" strokeWidth={2.5} />
                 <Text style={styles.incBtnLabel}>+{step}</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -353,31 +354,32 @@ export function CounterCard({
 
 const styles = StyleSheet.create({
   cardOuter: {
-    marginVertical: 10,
+    marginVertical: 3,
     width: '100%',
     position: 'relative',
   },
   glowBackdrop: {
     position: 'absolute',
     top: 2,
-    left: 6,
-    right: 6,
+    left: 4,
+    right: 4,
     bottom: -2,
-    borderRadius: 28,
+    borderRadius: 20,
     borderWidth: 1,
     opacity: 0.9,
   },
   glassCard: {
-    borderRadius: 24,
-    padding: 20,
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     borderWidth: 1,
     position: 'relative',
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.25,
-    shadowRadius: 20,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 3,
   },
   glassCardDark: {
     backgroundColor: 'rgba(18, 24, 38, 0.82)',
@@ -396,20 +398,20 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: 8,
   },
   titleInfoGroup: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    gap: 12,
+    gap: 8,
   },
   iconBadge: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
+    width: 32,
+    height: 32,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -417,24 +419,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   counterTitle: {
-    fontSize: 17,
+    fontSize: 14.5,
     fontWeight: '700',
     letterSpacing: -0.2,
-    marginBottom: 4,
+    marginBottom: 1,
   },
   badgesRow: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-    gap: 6,
+    gap: 4,
   },
   badgePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingVertical: 2.5,
-    paddingHorizontal: 8,
-    borderRadius: 6,
+    gap: 3,
+    paddingVertical: 1.5,
+    paddingHorizontal: 5,
+    borderRadius: 4,
   },
   twoStepPill: {
     backgroundColor: 'rgba(16, 185, 129, 0.14)',
@@ -443,7 +445,7 @@ const styles = StyleSheet.create({
   },
   twoStepPillText: {
     color: '#10B981',
-    fontSize: 10.5,
+    fontSize: 9,
     fontWeight: '700',
   },
   simplePill: {
@@ -453,7 +455,7 @@ const styles = StyleSheet.create({
   },
   simplePillText: {
     color: '#3B82F6',
-    fontSize: 10.5,
+    fontSize: 9,
     fontWeight: '700',
   },
   darkConstraintPill: {
@@ -463,23 +465,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
   },
   constraintText: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '600',
   },
   incOnlyText: {
     color: '#F59E0B',
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '700',
   },
   quickActionsGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 4,
   },
   actionBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
+    width: 27,
+    height: 27,
+    borderRadius: 7,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -490,12 +492,12 @@ const styles = StyleSheet.create({
   valueContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 18,
+    paddingVertical: 1,
   },
   valueText: {
-    fontSize: 54,
+    fontSize: 34,
     fontWeight: '900',
-    letterSpacing: -1,
+    letterSpacing: -0.6,
   },
   negativeValue: {
     color: '#F43F5E',
@@ -506,27 +508,22 @@ const styles = StyleSheet.create({
   zeroValueLight: {
     color: '#334155',
   },
-  notesText: {
-    fontSize: 12.5,
-    marginTop: 4,
-    fontWeight: '500',
-  },
   actionControlsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginTop: 4,
+    gap: 8,
+    marginTop: 1,
   },
   btnSlot: {
     flex: 1,
   },
   glassControlBtn: {
-    paddingVertical: 13,
-    borderRadius: 16,
+    paddingVertical: 8,
+    borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: 5,
     borderWidth: 1,
   },
   decBtn: {
@@ -544,27 +541,27 @@ const styles = StyleSheet.create({
     opacity: 0.35,
   },
   btnLabel: {
-    fontSize: 17,
+    fontSize: 14.5,
     fontWeight: '800',
   },
   incTouch: {
-    borderRadius: 16,
+    borderRadius: 12,
     overflow: 'hidden',
     shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
   },
   incGradient: {
-    paddingVertical: 13,
+    paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: 5,
   },
   incBtnLabel: {
     color: '#FFFFFF',
-    fontSize: 17,
+    fontSize: 14.5,
     fontWeight: '800',
   },
 });
