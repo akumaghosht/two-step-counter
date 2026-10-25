@@ -94,14 +94,38 @@ export function SettingsScreen() {
   };
 
   return (
-    <ScrollView
+    <View
       style={[
-        styles.scrollContainer,
+        styles.screenWrap,
         { backgroundColor: isDark ? '#0B0F17' : '#F1F5F9' },
-      ]}
-      contentContainerStyle={styles.contentWrap}
-      showsVerticalScrollIndicator={false}>
-      {/* 1. Theme Switcher Section */}
+      ]}>
+      {/* Background ambient liquid orbs for true glass depth */}
+      <View
+        style={[
+          styles.ambientOrbCyan,
+          {
+            backgroundColor: isDark
+              ? 'rgba(6, 182, 212, 0.12)'
+              : 'rgba(6, 182, 212, 0.08)',
+          },
+        ]}
+      />
+      <View
+        style={[
+          styles.ambientOrbViolet,
+          {
+            backgroundColor: isDark
+              ? 'rgba(139, 92, 246, 0.12)'
+              : 'rgba(139, 92, 246, 0.08)',
+          },
+        ]}
+      />
+
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.contentWrap}
+        showsVerticalScrollIndicator={false}>
+        {/* 1. Theme Switcher Section */}
       <View style={styles.sectionBlock}>
         <Text
           style={[
@@ -523,16 +547,41 @@ export function SettingsScreen() {
         </View>
       </View>
 
+      </ScrollView>
+
       {/* Confirmation Modal */}
       <ConfirmationModal
         config={dialogConfig}
         onClose={() => setDialogConfig(null)}
       />
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screenWrap: {
+    flex: 1,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  ambientOrbCyan: {
+    position: 'absolute',
+    top: 60,
+    right: -40,
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    pointerEvents: 'none',
+  },
+  ambientOrbViolet: {
+    position: 'absolute',
+    bottom: 120,
+    left: -40,
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    pointerEvents: 'none',
+  },
   scrollContainer: {
     flex: 1,
   },
