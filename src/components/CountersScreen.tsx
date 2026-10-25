@@ -126,33 +126,7 @@ export function CountersScreen() {
   };
 
   return (
-    <View
-      style={[
-        styles.screenWrap,
-        { backgroundColor: isDark ? '#0B0F17' : '#F1F5F9' },
-      ]}>
-      {/* Background ambient liquid orbs for true glass depth */}
-      <View
-        style={[
-          styles.ambientOrbCyan,
-          {
-            backgroundColor: isDark
-              ? 'rgba(6, 182, 212, 0.12)'
-              : 'rgba(6, 182, 212, 0.08)',
-          },
-        ]}
-      />
-      <View
-        style={[
-          styles.ambientOrbViolet,
-          {
-            backgroundColor: isDark
-              ? 'rgba(139, 92, 246, 0.12)'
-              : 'rgba(139, 92, 246, 0.08)',
-          },
-        ]}
-      />
-
+    <View style={styles.screenWrap}>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}

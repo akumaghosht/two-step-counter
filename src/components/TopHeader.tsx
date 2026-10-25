@@ -1,11 +1,15 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
-  Animated,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Plus } from 'lucide-react-native';
@@ -17,30 +21,66 @@ export function TopHeader() {
   const { activeTab, themeMode, setIsCreateModalOpen } = useCounters();
   const isDark = themeMode === 'dark';
 
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const isCounters = activeTab === 'counters';
+  const isFirstRender = useRef(true);
+
+  // btnProgress: 1 = Counters active (button visible), 0 = Settings active (button slid away)
+  const btnProgress = useSharedValue(isCounters ? 1 : 0);
+  const pressScale = useSharedValue(1);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      btnProgress.value = isCounters ? 1 : 0;
+      return;
+    }
+
+    btnProgress.value = withSpring(isCounters ? 1 : 0, {
+      duration: 420,
+      dampingRatio: 0.92,
+    });
+  }, [isCounters, btnProgress]);
 
   const handlePressIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.94,
-      speed: 35,
-      bounciness: 0,
-      useNativeDriver: true,
-    }).start();
+    pressScale.value = withSpring(0.93, {
+      duration: 150,
+      dampingRatio: 0.8,
+    });
   };
 
   const handlePressOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      speed: 22,
-      bounciness: 5,
-      useNativeDriver: true,
-    }).start();
+    pressScale.value = withSpring(1, {
+      duration: 250,
+      dampingRatio: 0.7,
+    });
   };
 
   const handlePlusPress = () => {
     triggerHaptic('medium');
     setIsCreateModalOpen(true);
   };
+
+  // Button slides smoothly away to the right when moving to Settings
+  const animatedAddBtnStyle = useAnimatedStyle(() => {
+    const slideRight = (1 - btnProgress.value) * 90;
+    return {
+      opacity: btnProgress.value,
+      transform: [
+        { translateX: slideRight },
+        { scale: pressScale.value * (0.92 + 0.08 * btnProgress.value) },
+      ],
+    };
+  });
+
+  const countersTitleStyle = useAnimatedStyle(() => ({
+    opacity: btnProgress.value,
+    transform: [{ translateX: (1 - btnProgress.value) * -14 }],
+  }));
+
+  const settingsTitleStyle = useAnimatedStyle(() => ({
+    opacity: 1 - btnProgress.value,
+    transform: [{ translateX: btnProgress.value * 14 }],
+  }));
 
   return (
     <View
@@ -65,50 +105,61 @@ export function TopHeader() {
       />
 
       <View style={styles.contentRow}>
-        {/* Left Title */}
+        {/* Left Title: Smooth cross-fade with subtle parallax */}
         <View style={styles.titleGroup}>
-          <Text
-            style={[
-              styles.screenTitle,
-              { color: isDark ? '#FFFFFF' : '#0F172A' },
-            ]}>
-            {activeTab === 'counters' ? 'Counters' : 'Settings'}
-          </Text>
+          <Animated.View style={countersTitleStyle}>
+            <Text
+              style={[
+                styles.screenTitle,
+                { color: isDark ? '#FFFFFF' : '#0F172A' },
+              ]}>
+              Counters
+            </Text>
+          </Animated.View>
+          <Animated.View
+            style={[styles.settingsTitleWrap, settingsTitleStyle]}
+            pointerEvents={!isCounters ? 'auto' : 'none'}>
+            <Text
+              style={[
+                styles.screenTitle,
+                { color: isDark ? '#FFFFFF' : '#0F172A' },
+              ]}>
+              Settings
+            </Text>
+          </Animated.View>
         </View>
 
-        {/* Right Action: Glowing Gradient Pill Button */}
-        {activeTab === 'counters' ? (
-          <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-            <TouchableOpacity
-              style={[
-                styles.addBtnWrapper,
-                isDark ? styles.addBtnWrapperDark : styles.addBtnWrapperLight,
-              ]}
-              onPress={handlePlusPress}
-              onPressIn={handlePressIn}
-              onPressOut={handlePressOut}
-              activeOpacity={0.88}
-              accessibilityLabel="Add New Counter"
-              accessibilityRole="button">
-              <LinearGradient
-                colors={
-                  isDark
-                    ? ['#6366F1', '#8B5CF6']
-                    : ['#4F46E5', '#7C3AED']
-                }
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.addBtnGradient}>
-                <View style={styles.iconCircle}>
-                  <Plus size={14} color="#FFFFFF" strokeWidth={2.8} />
-                </View>
-                <Text style={styles.addBtnText}>New Counter</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          </Animated.View>
-        ) : (
-          <View style={styles.placeholderRight} />
-        )}
+        {/* Right Action: Glowing Gradient Pill Button sliding away to the right */}
+        <Animated.View
+          style={animatedAddBtnStyle}
+          pointerEvents={isCounters ? 'auto' : 'none'}>
+          <TouchableOpacity
+            style={[
+              styles.addBtnWrapper,
+              isDark ? styles.addBtnWrapperDark : styles.addBtnWrapperLight,
+            ]}
+            onPress={handlePlusPress}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            activeOpacity={0.88}
+            accessibilityLabel="Add New Counter"
+            accessibilityRole="button">
+            <LinearGradient
+              colors={
+                isDark
+                  ? ['#6366F1', '#8B5CF6']
+                  : ['#4F46E5', '#7C3AED']
+              }
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.addBtnGradient}>
+              <View style={styles.iconCircle}>
+                <Plus size={14} color="#FFFFFF" strokeWidth={2.8} />
+              </View>
+              <Text style={styles.addBtnText}>New Counter</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
     </View>
   );
@@ -150,9 +201,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   titleGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+    position: 'relative',
+    justifyContent: 'center',
+    minHeight: 34,
+  },
+  settingsTitleWrap: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
   },
   screenTitle: {
     fontSize: 26,
