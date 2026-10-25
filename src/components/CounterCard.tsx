@@ -293,7 +293,7 @@ export function CounterCard({
                 accessibilityRole="button"
                 accessibilityState={{ disabled: isDecDisabled }}>
                 <Minus
-                  size={16}
+                  size={17}
                   color={
                     isDecDisabled
                       ? isDark
@@ -303,7 +303,7 @@ export function CounterCard({
                       ? '#E2E8F0'
                       : '#1E293B'
                   }
-                  strokeWidth={2.5}
+                  strokeWidth={2.6}
                 />
                 <Text
                   style={[
@@ -318,7 +318,7 @@ export function CounterCard({
                         : '#1E293B',
                     },
                   ]}>
-                  -{step}
+                  {step}
                 </Text>
               </TouchableOpacity>
             </Animated.View>
@@ -341,8 +341,8 @@ export function CounterCard({
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.incGradient}>
-                <Plus size={16} color="#FFFFFF" strokeWidth={2.5} />
-                <Text style={styles.incBtnLabel}>+{step}</Text>
+                <Plus size={17} color="#FFFFFF" strokeWidth={2.6} />
+                <Text style={styles.incBtnLabel}>{step}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </Animated.View>
@@ -519,12 +519,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   glassControlBtn: {
-    paddingVertical: 8,
-    borderRadius: 12,
+    paddingVertical: 5.5,
+    borderRadius: 11,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 5,
+    gap: 6,
     borderWidth: 1,
   },
   decBtn: {
@@ -542,11 +542,12 @@ const styles = StyleSheet.create({
     opacity: 0.35,
   },
   btnLabel: {
-    fontSize: 14.5,
+    fontSize: 16.5,
     fontWeight: '800',
+    fontVariant: ['tabular-nums'],
   },
   incTouch: {
-    borderRadius: 12,
+    borderRadius: 11,
     overflow: 'hidden',
     shadowColor: '#6366F1',
     shadowOffset: { width: 0, height: 2 },
@@ -554,15 +555,16 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
   },
   incGradient: {
-    paddingVertical: 8,
+    paddingVertical: 5.5,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 5,
+    gap: 6,
   },
   incBtnLabel: {
     color: '#FFFFFF',
-    fontSize: 14.5,
+    fontSize: 16.5,
     fontWeight: '800',
+    fontVariant: ['tabular-nums'],
   },
 });
