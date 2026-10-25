@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -6,6 +6,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import {
   Calculator,
   ChevronRight,
@@ -37,9 +42,51 @@ export function SettingsScreen() {
   const isDark = themeMode === 'dark';
   const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
 
+  // Local displayed selection so pill and icons slide/highlight first
+  const [displayedTheme, setDisplayedTheme] = useState<'dark' | 'light'>(themeMode);
+  const isAnimatingRef = useRef(false);
+  const toggleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const pillTranslateX = useSharedValue(isDark ? 69 : 0);
+
+  // Sync state if themeMode was changed elsewhere
+  useEffect(() => {
+    if (!isAnimatingRef.current) {
+      setDisplayedTheme(themeMode);
+      pillTranslateX.value = themeMode === 'dark' ? 69 : 0;
+    }
+  }, [themeMode, pillTranslateX]);
+
+  useEffect(() => {
+    return () => {
+      if (toggleTimeoutRef.current) {
+        clearTimeout(toggleTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const pillAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: pillTranslateX.value }],
+  }));
+
   const handleToggleTheme = (mode: 'dark' | 'light') => {
+    if (mode === displayedTheme || isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
     triggerHaptic('light');
-    setThemeMode(mode);
+
+    // 1. Immediately slide the pill and highlight target option
+    setDisplayedTheme(mode);
+    const targetX = mode === 'dark' ? 69 : 0;
+    pillTranslateX.value = withSpring(targetX, {
+      duration: 270,
+      dampingRatio: 0.84,
+    });
+
+    // 2. Once the slide finishes, toggle the global theme
+    toggleTimeoutRef.current = setTimeout(() => {
+      setThemeMode(mode);
+      isAnimatingRef.current = false;
+    }, 260);
   };
 
   const handleResetAllPress = () => {
@@ -126,51 +173,70 @@ export function SettingsScreen() {
               </Text>
             </View>
 
-            {/* Segmented Switch */}
+            {/* Segmented Switch with Animated Sliding Pill */}
             <View
               style={[
                 styles.themeSwitchGroup,
                 isDark ? styles.themeSwitchDark : styles.themeSwitchLight,
               ]}>
-              <TouchableOpacity
+              {/* Animated Sliding Pill */}
+              <Animated.View
                 style={[
-                  styles.themeOptionBtn,
-                  !isDark && styles.themeOptionActiveLight,
+                  styles.slidingPill,
+                  displayedTheme === 'dark' ? styles.slidingPillDark : styles.slidingPillLight,
+                  pillAnimatedStyle,
                 ]}
+              />
+
+              <TouchableOpacity
+                style={styles.themeOptionBtn}
                 onPress={() => handleToggleTheme('light')}
-                activeOpacity={0.8}
-                accessibilityLabel="Switch to Light Theme">
+                activeOpacity={0.85}
+                accessibilityLabel="Switch to Light Theme"
+                accessibilityRole="button">
                 <Sun
-                  size={16}
-                  color={!isDark ? '#F59E0B' : '#94A3B8'}
-                  strokeWidth={2.2}
+                  size={15}
+                  color={displayedTheme === 'light' ? '#F59E0B' : isDark ? '#94A3B8' : '#64748B'}
+                  strokeWidth={2.3}
                 />
                 <Text
                   style={[
                     styles.themeOptionText,
-                    { color: !isDark ? '#0F172A' : '#94A3B8' },
+                    {
+                      color: displayedTheme === 'light'
+                        ? '#0F172A'
+                        : isDark
+                        ? '#94A3B8'
+                        : '#64748B',
+                      fontWeight: displayedTheme === 'light' ? '800' : '600',
+                    },
                   ]}>
                   Light
                 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[
-                  styles.themeOptionBtn,
-                  isDark && styles.themeOptionActiveDark,
-                ]}
+                style={styles.themeOptionBtn}
                 onPress={() => handleToggleTheme('dark')}
-                activeOpacity={0.8}
-                accessibilityLabel="Switch to Dark Theme">
+                activeOpacity={0.85}
+                accessibilityLabel="Switch to Dark Theme"
+                accessibilityRole="button">
                 <Moon
-                  size={16}
-                  color={isDark ? '#818CF8' : '#64748B'}
-                  strokeWidth={2.2}
+                  size={15}
+                  color={displayedTheme === 'dark' ? '#818CF8' : isDark ? '#64748B' : '#94A3B8'}
+                  strokeWidth={2.3}
                 />
                 <Text
                   style={[
                     styles.themeOptionText,
-                    { color: isDark ? '#FFFFFF' : '#64748B' },
+                    {
+                      color: displayedTheme === 'dark'
+                        ? '#FFFFFF'
+                        : isDark
+                        ? '#64748B'
+                        : '#94A3B8',
+                      fontWeight: displayedTheme === 'dark' ? '800' : '600',
+                    },
                   ]}>
                   Dark
                 </Text>
@@ -615,9 +681,13 @@ const styles = StyleSheet.create({
   },
   themeSwitchGroup: {
     flexDirection: 'row',
+    width: 144,
+    height: 34,
     borderRadius: 12,
-    padding: 2.5,
+    padding: 3,
     borderWidth: 1,
+    position: 'relative',
+    alignItems: 'center',
   },
   themeSwitchDark: {
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
@@ -627,27 +697,42 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
     borderColor: 'rgba(0, 0, 0, 0.08)',
   },
-  themeOptionBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+  slidingPill: {
+    position: 'absolute',
+    top: 3,
+    left: 3,
+    width: 69,
+    height: 26,
     borderRadius: 9,
+    zIndex: 1,
   },
-  themeOptionActiveDark: {
-    backgroundColor: 'rgba(99, 102, 241, 0.3)',
+  slidingPillDark: {
+    backgroundColor: 'rgba(99, 102, 241, 0.32)',
+    borderWidth: 1,
+    borderColor: 'rgba(129, 140, 248, 0.4)',
   },
-  themeOptionActiveLight: {
+  slidingPillLight: {
     backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.12,
     shadowRadius: 4,
+    elevation: 3,
+  },
+  themeOptionBtn: {
+    width: 69,
+    height: 26,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+    borderRadius: 9,
+    zIndex: 2,
   },
   themeOptionText: {
     fontSize: 12,
-    fontWeight: '700',
   },
   bentoGrid: {
     flexDirection: 'row',
