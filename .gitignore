@@ -9,14 +9,19 @@ dist/
 web-build/
 expo-env.d.ts
 /.agents
-# Native
+# Native & Credentials
 .kotlin/
 *.orig.*
 *.jks
+*.keystore
 *.p8
 *.p12
 *.key
+*.pem
 *.mobileprovision
+google-services.json
+GoogleService-Info.plist
+pc-api-*.json
 
 # Metro
 .metro-health-check*
@@ -28,10 +33,11 @@ yarn-error.*
 
 # macOS
 .DS_Store
-*.pem
 
-# local env files
-.env*.local
+# environment files
+.env
+.env.*
+!.env.example
 
 # typescript
 *.tsbuildinfo
